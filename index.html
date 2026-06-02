@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Code with Claude Tokyo 2026 — Session Planner</title>
+<meta name="description" content="非公式セッションプランナー — Code with Claude Tokyo / Extended 2026">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Crect x='6.5' y='9.5' width='4.6' height='16' rx='2.3' fill='%231D9E75'/%3E%3Crect x='13.7' y='6' width='4.6' height='19.5' rx='2.3' fill='%237F77DD'/%3E%3Crect x='20.9' y='13' width='4.6' height='12.5' rx='2.3' fill='%23D85A30'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Crect x='6.5' y='9.5' width='4.6' height='16' rx='2.3' fill='%231D9E75'/%3E%3Crect x='13.7' y='6' width='4.6' height='19.5' rx='2.3' fill='%237F77DD'/%3E%3Crect x='20.9' y='13' width='4.6' height='12.5' rx='2.3' fill='%23D85A30'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#ffffff;--sf:#f7f6f3;--sf2:#f0efe9;--sf3:#e9e7df;
+  --tx:#181816;--tx2:#5a5955;--tx3:#9a9890;
+  --bd:rgba(0,0,0,0.10);--bd2:rgba(0,0,0,0.18);
+  --shadow:0 1px 2px rgba(0,0,0,0.04),0 8px 24px rgba(0,0,0,0.08);
+  --shadow-lg:0 4px 12px rgba(0,0,0,0.10),0 24px 48px rgba(0,0,0,0.18);
+  --teal:#1D9E75;--teal-l:#E1F5EE;--teal-d:#085041;--teal-m:#0F6E56;
+  --purple:#7F77DD;--purple-l:#EEEDFE;--purple-d:#3C3489;--purple-m:#534AB7;
+  --coral:#D85A30;--coral-l:#FAECE7;--coral-d:#712B13;--coral-m:#993C1D;
+  --gray:#8d8b82;--gray-l:#F1EFE8;--gray-d:#444441;--gray-m:#5F5E5A;
+  --r:10px;--hdr:46px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#161614;--sf:#202020;--sf2:#282826;--sf3:#323230;
+  --tx:#eeede6;--tx2:#b0aea6;--tx3:#6c6a62;
+  --bd:rgba(255,255,255,0.09);--bd2:rgba(255,255,255,0.18);
+  --shadow:0 1px 2px rgba(0,0,0,0.3),0 8px 24px rgba(0,0,0,0.4);
+  --shadow-lg:0 4px 12px rgba(0,0,0,0.4),0 24px 48px rgba(0,0,0,0.55);
+  --teal-l:#0a3d2e;--teal-d:#9FE1CB;--teal-m:#5DCAA5;
+  --purple-l:#1d1a52;--purple-d:#CECBF6;--purple-m:#AFA9EC;
+  --coral-l:#3a1507;--coral-d:#F5C4B3;--coral-m:#F0997B;
+  --gray-l:#2b2b29;--gray-d:#D3D1C7;--gray-m:#b0aea6;
+}}
+html{-webkit-text-size-adjust:100%;}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue','Hiragino Sans','Noto Sans JP',Arial,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;line-height:1.5;}
+.page{max-width:760px;margin:0 auto;padding:0 0 5rem;}
+.t-r,.t-f{--c:var(--teal);--cl:var(--teal-l);--cd:var(--teal-d);--cm:var(--teal-m);}
+.t-p,.t-b{--c:var(--purple);--cl:var(--purple-l);--cd:var(--purple-d);--cm:var(--purple-m);}
+.t-c,.t-w{--c:var(--coral);--cl:var(--coral-l);--cd:var(--coral-d);--cm:var(--coral-m);}
+.t-s{--c:var(--gray);--cl:var(--gray-l);--cd:var(--gray-d);--cm:var(--gray-m);}
+.ev-header{padding:1.6rem 1.25rem 1.1rem;}
+.ev-eyebrow{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:7px;display:flex;align-items:center;gap:6px;}
+.ev-title{font-size:23px;font-weight:600;letter-spacing:-0.01em;line-height:1.18;margin-bottom:7px;}
+.ev-meta{font-size:12.5px;color:var(--tx2);display:flex;align-items:center;gap:9px;flex-wrap:wrap;}
+.ev-dot{width:3px;height:3px;border-radius:50%;background:var(--bd2);}
+.sticky{position:sticky;top:0;z-index:50;background:var(--bg);backdrop-filter:saturate(1.2) blur(8px);-webkit-backdrop-filter:saturate(1.2) blur(8px);border-bottom:0.5px solid var(--bd);}
+.tabs{display:flex;gap:6px;padding:10px 1.25rem 0;}
+.tab{flex:1;border:0.5px solid var(--bd);background:var(--sf);border-radius:10px 10px 0 0;padding:9px 10px 11px;cursor:pointer;text-align:left;transition:background .15s,border-color .15s,color .15s;-webkit-tap-highlight-color:transparent;border-bottom:none;}
+.tab:hover{background:var(--sf2);}
+.tab.on{background:var(--bg);border-color:var(--bd2);box-shadow:0 -2px 8px rgba(0,0,0,0.03);}
+.tab.on .tab-d{color:var(--tx);}
+.tab-n{font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;color:var(--tx3);}
+.tab.on .tab-n{color:var(--c,var(--teal));}
+.tab-d{font-size:13px;font-weight:500;color:var(--tx2);margin-top:2px;}
+.tab-day1{--c:var(--teal);}.tab-day2{--c:var(--coral);}
+.ctrl{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 1.25rem;border-top:0.5px solid var(--bd);}
+.lgnd{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--tx2);padding:5px 10px;border-radius:20px;border:0.5px solid var(--bd);background:var(--sf);cursor:pointer;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
+.chip:hover{border-color:var(--bd2);}
+.chip .ldot{width:9px;height:9px;border-radius:3px;flex-shrink:0;background:var(--c);}
+.chip.dim{opacity:.4;text-decoration:line-through;text-decoration-thickness:1px;}
+.hint{font-size:11px;color:var(--tx3);display:inline-flex;align-items:center;gap:4px;white-space:nowrap;}
+.view-pc{display:block;}
+.view-sp{display:none;}
+.tl-outer{display:flex;padding:14px 1.25rem 0;}
+.axis{width:44px;flex-shrink:0;position:relative;}
+.tick{position:absolute;right:0;left:0;display:flex;align-items:flex-start;pointer-events:none;}
+.tlb{font-size:9.5px;width:38px;text-align:right;padding-right:6px;line-height:1;margin-top:-5px;color:var(--tx3);font-variant-numeric:tabular-nums;}
+.tlb.hr{color:var(--tx2);font-weight:600;}
+.tln{position:absolute;left:40px;right:-14px;border-top:0.5px dashed var(--bd);}
+.tln.hr{border-top-style:solid;border-color:var(--bd2);}
+.canvas{flex:1;position:relative;}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}
+.col{position:relative;}
+.col-hdr{height:var(--hdr);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:9px;padding:0 6px;background:var(--sf2);border:0.5px solid var(--bd);}
+.col-hdr-n{font-size:11.5px;font-weight:600;line-height:1.25;color:var(--tx);text-align:center;}
+.col-hdr-d{font-size:9px;margin-top:2px;color:var(--tx3);text-align:center;line-height:1.2;}
+.blk{position:absolute;left:0;right:0;border-radius:7px;overflow:hidden;cursor:pointer;background:var(--cl);border-left:3px solid var(--c);transition:transform .12s,box-shadow .14s,opacity .18s;-webkit-tap-highlight-color:transparent;z-index:14;}
+.blk:hover{transform:translateY(-1px);z-index:18;box-shadow:var(--shadow);}
+.blk:active{transform:scale(.99);}
+.blk.on{outline:2px solid var(--c);outline-offset:-1px;z-index:19;}
+.blk.dim{opacity:.26;}
+.blk.dim-f{opacity:.22;}
+.blk-in{padding:5px 8px 5px 9px;height:100%;position:relative;display:flex;flex-direction:column;}
+.blk-t{font-size:10.5px;font-weight:600;line-height:1.32;color:var(--cd);padding-right:18px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.blk-s{font-size:9px;color:var(--cm);margin-top:2px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.blk-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:auto;padding-top:3px;}
+.tag{font-size:8px;font-weight:600;padding:1px 5px;border-radius:3px;line-height:1.5;letter-spacing:0.02em;background:color-mix(in srgb,var(--c) 14%,transparent);color:var(--cm);}
+.tag-jp{background:var(--sf3);color:var(--tx3);}
+.ckb{position:absolute;top:5px;right:5px;width:17px;height:17px;border-radius:50%;border:1.5px solid var(--c);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;opacity:.5;transition:opacity .12s,background .12s;z-index:5;}
+.ckb:hover{opacity:1;}
+.ckb svg{opacity:0;}
+.blk.on .ckb{background:var(--c);opacity:1;}
+.blk.on .ckb svg{opacity:1;}
+/* break / special band: visible tinted zone, sessions float above (z-index 14) */
+.sp-band{position:absolute;left:0;right:0;z-index:1;border-radius:8px;background:color-mix(in srgb,var(--gray-l) 62%,transparent);border:0.5px dashed var(--bd2);cursor:pointer;transition:filter .14s,background .14s;-webkit-tap-highlight-color:transparent;}
+.sp-band:hover{filter:brightness(0.97);}
+@media(prefers-color-scheme:dark){.sp-band:hover{filter:brightness(1.15);}}
+.sp-band.on{border-style:solid;border-color:var(--gray-m);background:color-mix(in srgb,var(--gray-m) 16%,transparent);}
+.sp-label{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);max-width:94%;display:flex;align-items:center;gap:7px;padding:5px 13px;border-radius:20px;background:var(--bg);border:0.5px solid var(--bd2);box-shadow:var(--shadow);white-space:nowrap;overflow:hidden;}
+.sp-band.on .sp-label{background:var(--gray-m);border-color:var(--gray-m);}
+.sp-band.on .sp-nm,.sp-band.on .sp-sk{color:#fff;}
+.sp-ck{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--gray);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:transparent;font-size:11px;line-height:1;}
+.sp-band.on .sp-ck{background:#fff;border-color:#fff;color:var(--gray-d);}
+.sp-nm{font-size:11px;font-weight:600;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;}
+.sp-sk{font-size:9.5px;color:var(--tx3);overflow:hidden;text-overflow:ellipsis;}
+.slot{margin:0 1.05rem;}
+.slot-h{display:flex;align-items:center;gap:9px;padding:16px 2px 7px;position:sticky;top:var(--stick,96px);z-index:20;}
+.slot-t{font-size:13px;font-weight:700;color:var(--tx);font-variant-numeric:tabular-nums;background:var(--bg);padding-right:4px;}
+.slot-l{flex:1;height:0.5px;background:var(--bd);}
+.mcard{position:relative;border:0.5px solid var(--bd);border-left:3px solid var(--c);background:var(--bg);border-radius:11px;margin-bottom:9px;overflow:hidden;transition:box-shadow .15s,opacity .18s,border-color .15s;}
+.mcard.on{border-color:var(--c);box-shadow:0 0 0 1.5px var(--c) inset;background:var(--cl);}
+.mcard.dim-f{opacity:.42;}
+.mcard-main{display:flex;align-items:stretch;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.mcard-body{flex:1;min-width:0;padding:12px 4px 12px 13px;}
+.mcard-time{font-size:11px;color:var(--cm);font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:0.02em;}
+.mcard-t{font-size:14px;font-weight:600;line-height:1.36;color:var(--tx);margin-top:3px;}
+.mcard-s{font-size:11.5px;color:var(--tx2);margin-top:4px;}
+.mcard-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;align-items:center;}
+.mtag{font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:4px;line-height:1.5;letter-spacing:0.02em;}
+.mtag-stg{background:var(--sf2);color:var(--tx2);}
+.mtag-trk{background:color-mix(in srgb,var(--c) 16%,transparent);color:var(--cm);}
+.mtag-jp{background:var(--sf3);color:var(--tx3);}
+.mwarn{display:none;align-items:center;gap:5px;font-size:10.5px;font-weight:600;color:var(--coral-m);margin-top:8px;}
+.mcard.warn .mwarn{display:flex;}
+.mcard.warn.on .mwarn{display:none;}
+.mcard-aside{display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 11px;flex-shrink:0;gap:8px;}
+.mckb{width:26px;height:26px;border-radius:50%;border:1.7px solid var(--c);background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .12s;-webkit-tap-highlight-color:transparent;padding:9px;box-sizing:content-box;margin:-9px;}
+.mckb svg{opacity:0;}
+.mcard.on .mckb{background:var(--c);}
+.mcard.on .mckb svg{opacity:1;}
+.mchev{color:var(--tx3);font-size:18px;line-height:1;transition:transform .2s;display:flex;}
+.mcard.exp .mchev{transform:rotate(180deg);}
+.mcard-desc{max-height:0;overflow:hidden;transition:max-height .26s ease;}
+.mcard.exp .mcard-desc{max-height:560px;}
+.mcard-desc-in{padding:11px 13px 14px;font-size:12.5px;line-height:1.6;color:var(--tx2);border-top:0.5px solid var(--bd);}
+.mspecial{display:flex;align-items:center;gap:10px;margin:0 1.05rem 9px;padding:11px 13px;border:0.5px dashed var(--bd2);border-radius:11px;background:var(--sf);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .14s;}
+.mspecial:hover{background:var(--sf2);}
+.mspecial.on{background:var(--gray-m);border-style:solid;border-color:var(--gray-m);}
+.mspecial.on .msp-t,.mspecial.on .msp-tm{color:#fff;}
+.msp-ck{width:24px;height:24px;border-radius:50%;border:1.7px solid var(--gray);background:var(--bg);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.msp-ck svg{opacity:0;}
+.mspecial.on .msp-ck{background:var(--gray-d);border-color:var(--gray-d);}
+.mspecial.on .msp-ck svg{opacity:1;}
+.msp-tm{font-size:11px;color:var(--tx3);font-weight:600;font-variant-numeric:tabular-nums;}
+.msp-t{font-size:13px;font-weight:600;color:var(--tx2);margin-top:1px;}
+.sumpanel{margin:1.6rem 1.05rem 0;border:0.5px solid var(--bd);border-radius:13px;overflow:hidden;background:var(--sf);}
+.sumhd{display:flex;align-items:center;justify-content:space-between;padding:13px 15px;border-bottom:0.5px solid var(--bd);}
+.sumhdl{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--tx);}
+.sumcnt{font-weight:500;color:var(--tx3);font-size:12px;}
+.clrbtn{font-size:11.5px;color:var(--tx3);cursor:pointer;padding:5px 11px;border-radius:7px;border:0.5px solid var(--bd);background:var(--bg);transition:all .12s;-webkit-tap-highlight-color:transparent;}
+.clrbtn:hover{background:var(--sf2);color:var(--tx2);}
+.sumbody{padding:4px 15px;background:var(--bg);}
+.summt{font-size:12.5px;color:var(--tx3);padding:18px 0;text-align:center;}
+.srow{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:0.5px solid var(--bd);font-size:12.5px;}
+.srow:last-child{border-bottom:none;}
+.stag{font-size:9px;font-weight:700;padding:2.5px 7px;border-radius:4px;flex-shrink:0;line-height:1.5;letter-spacing:0.02em;background:var(--cl);color:var(--cd);}
+.stm{color:var(--tx3);flex-shrink:0;font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.sttl{color:var(--tx);min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;}
+.sja{font-size:9px;color:var(--tx3);flex-shrink:0;}
+.srm{font-size:15px;color:var(--tx3);cursor:pointer;padding:2px 7px;border-radius:6px;border:none;background:transparent;flex-shrink:0;line-height:1;transition:all .12s;-webkit-tap-highlight-color:transparent;}
+.srm:hover{background:var(--sf2);color:var(--tx);}
+.foot{margin:2rem 1.25rem 0;padding-top:1.1rem;border-top:0.5px solid var(--bd);font-size:11px;line-height:1.6;color:var(--tx3);}
+.foot a{color:var(--tx2);}
+.modal-bd{position:fixed;inset:0;background:rgba(0,0,0,0.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:200;display:none;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .18s;}
+.modal-bd.open{display:flex;opacity:1;}
+.modal{background:var(--bg);border:0.5px solid var(--bd2);border-radius:16px;max-width:520px;width:100%;max-height:84vh;overflow:auto;box-shadow:var(--shadow-lg);border-top:4px solid var(--c);transform:translateY(8px) scale(.99);transition:transform .2s;}
+.modal-bd.open .modal{transform:none;}
+.modal-h{padding:22px 24px 0;position:relative;}
+.modal-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:0.5px solid var(--bd);background:var(--sf);color:var(--tx2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .12s;}
+.modal-close:hover{background:var(--sf2);color:var(--tx);}
+.modal-time{font-size:12px;font-weight:600;color:var(--cm);font-variant-numeric:tabular-nums;letter-spacing:0.03em;}
+.modal-t{font-size:19px;font-weight:600;line-height:1.32;color:var(--tx);margin-top:6px;padding-right:36px;}
+.modal-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;align-items:center;}
+.modal-spk{font-size:13px;color:var(--tx2);margin-top:12px;display:flex;align-items:center;gap:6px;}
+.modal-desc{padding:16px 24px 4px;font-size:14px;line-height:1.72;color:var(--tx2);}
+.modal-ft{padding:14px 24px 22px;display:flex;justify-content:flex-end;}
+.modal-ck{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;font-weight:600;padding:11px 18px;border-radius:10px;border:1.5px solid var(--c);background:var(--bg);color:var(--c);cursor:pointer;transition:all .14s;-webkit-tap-highlight-color:transparent;}
+.modal-ck:hover{background:var(--cl);}
+.modal-ck.on{background:var(--c);color:#fff;}
+.modal-ck .ti{font-size:17px;}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
+@media(max-width:720px){
+  .view-pc{display:none;}
+  .view-sp{display:block;}
+  .ev-title{font-size:21px;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="ev-header">
+    <div class="ev-eyebrow"><i class="ti ti-sparkles" aria-hidden="true"></i> Anthropic · Developer Conference</div>
+    <div class="ev-title" id="evTitle">Code with Claude Tokyo 2026</div>
+    <div class="ev-meta" id="evMeta"></div>
+  </header>
+  <div class="sticky" id="stick">
+    <div class="tabs" role="tablist">
+      <button class="tab tab-day1" id="tab-day1" role="tab" onclick="switchDay('day1')">
+        <div class="tab-n">Day 1 · 6/10</div><div class="tab-d">Code with Claude</div>
+      </button>
+      <button class="tab tab-day2" id="tab-day2" role="tab" onclick="switchDay('day2')">
+        <div class="tab-n">Day 2 · 6/11</div><div class="tab-d">Extended</div>
+      </button>
+    </div>
+    <div class="ctrl">
+      <div class="lgnd" id="lgnd"></div>
+      <div class="hint"><i class="ti ti-hand-finger" style="font-size:13px" aria-hidden="true"></i><span>タップで詳細・右上で参加チェック</span></div>
+    </div>
+  </div>
+  <div class="view-pc">
+    <div class="tl-outer">
+      <div class="axis" id="axis"></div>
+      <div class="canvas" id="canvas"><div class="cols" id="cols"></div></div>
+    </div>
+  </div>
+  <div class="view-sp" id="splist"></div>
+  <div class="sumpanel">
+    <div class="sumhd">
+      <div class="sumhdl"><i class="ti ti-calendar-check" style="font-size:15px" aria-hidden="true"></i>参加予定<span class="sumcnt" id="scnt"></span></div>
+      <button class="clrbtn" id="clrb" onclick="clearAll()" style="display:none">すべてクリア</button>
+    </div>
+    <div class="sumbody"><div id="suml"><div class="summt">セッションをチェックすると、ここに時系列で並びます</div></div></div>
+  </div>
+  <footer class="foot" id="foot"></footer>
+</div>
+<div class="modal-bd" id="modalBd" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalT">
+    <div class="modal-h">
+      <button class="modal-close" onclick="closeModal()" aria-label="閉じる">✕</button>
+      <div class="modal-time" id="modalTime"></div>
+      <div class="modal-t" id="modalT"></div>
+      <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-spk" id="modalSpk"></div>
+    </div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-ft"><button class="modal-ck" id="modalCk" onclick="modalToggle()"></button></div>
+  </div>
+</div>
+<script>
+"use strict";
+const CK_SVG='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="1,4 3.8,6.6 9,1" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const DAYS={
+  day1:{
+    label:"Code with Claude: Tokyo",dateStr:"2026-06-10",
+    meta:["June 10, 2026","Tokyo, Japan","08:00 – 20:00 JST","英日同時通訳あり"],
+    S0:480,E0:1200,PX:1.8,storageKey:"cwc_tokyo_2026_day1",
+    cols:[["main","Main stage","Main sessions"],["brk","Breakout stage","Deep-dives"],["ws","Workshop","Hands-on"]],
+    colors:[["r","Research"],["p","Claude Platform"],["c","Claude Code"]],
+    data:[
+      {id:"bk",col:"all",tr:"s",s:"08:00",e:"09:00",ttl:"Check-in & breakfast"},
+      {id:"kn",col:"all",tr:"s",s:"09:00",e:"10:00",ttl:"Opening keynote",spk:"Angela Jiang · Cat Wu · Dianne Penn · Katelyn Lesse"},
+      {id:"br",col:"all",tr:"s",s:"10:00",e:"10:30",ttl:"Morning break"},
+      {id:"m1",col:"main",tr:"c",s:"10:30",e:"11:00",ttl:"What's new in Claude Code",spk:"Charmaine Lee",desc:"A twenty-minute summary of what's new in Claude Code: what shipped, why we built it, and how to get started."},
+      {id:"b1",col:"brk",tr:"p",s:"10:30",e:"11:00",ttl:"Memory and dreaming for self-learning agents",spk:"Mahesh Murag",desc:"How memory and dreaming turn Claude Managed Agents into self-learning systems. This session walks through design considerations for memory architectures and how dreaming verifies and enriches memory between sessions."},
+      {id:"w1",col:"ws",tr:"r",s:"10:30",e:"11:15",ttl:"Picking the right model",spk:"Rodrigo Olivares",desc:"Hands-on techniques for testing and comparing models against your use case, so you can make a confident call each time a new release ships."},
+      {id:"m2",col:"main",tr:"p",s:"11:15",e:"11:45",ttl:"Inside Canva AI: Architecting an agentic system for tens of millions of users",spk:"Danny Wu",desc:"Canva AI is a fully agentic, conversational platform serving tens of millions of users a month, leveraging Claude. Danny Wu, Head of AI Products, walks through the architecture behind it: the cost and reliability tradeoffs that come with operating at this scale, and what the team would do differently building it from scratch today."},
+      {id:"b2",col:"brk",tr:"r",s:"11:15",e:"11:45",ttl:"The expanding toolkit",spk:"Lucas Gonzalez",desc:"Over the last year, capabilities that used to require heavy scaffolding have moved into the model: reliable tool use, context management, writing and running code, computer use, and more. This session walks through these capabilities, shows what changed between model generations, and demonstrates how they compose into agents that finish work instead of just starting it."},
+      {id:"w2",col:"ws",tr:"c",s:"11:30",e:"12:15",ttl:"Beyond the basics with Claude Code",spk:"Sosuke Suzuki",desc:"The mechanics that separate basic Claude Code use from real leverage: CLAUDE.md done well, wiring tools in with MCP, packaging team knowledge as skills, and using auto mode safely."},
+      {id:"m3",col:"main",tr:"p",s:"12:00",e:"12:30",ttl:"How to get to production faster with Claude Managed Agents",spk:"Jess Yan · Michael Cohen · Yusuke Kaji",desc:"Building agents used to mean spending development cycles on secure infrastructure, state management, permissioning, and reworking your agent loops for every model upgrade. Managed Agents, on the Claude Platform, now handles that layer for you. This session covers the fundamentals of building and deploying a production-grade agent, and you'll hear firsthand how Rakuten is using Managed Agents to power their work."},
+      {id:"b3",col:"brk",tr:"c",s:"12:00",e:"12:30",ttl:'From "AI-assisted" to "AI-delegated": Redesigning the development process to standardize AI across the org',spk:"Kohei Noguchi",ja:1,desc:'CyberAgent has driven the adoption of AI agents, including Claude Code, across the organization without resorting to top-down mandates — preserving a culture where engineers choose for themselves. In this session, the tech lead of MG-DX shares how they redesigned their development process around AI as a default assumption, the agent and workflow architecture they built to move from "using AI" to "delegating to AI," and what those changes look like in the metrics.'},
+      {id:"ln",col:"all",tr:"s",s:"12:30",e:"14:00",ttl:"Lunch"},
+      {id:"w3",col:"ws",tr:"c",s:"12:30",e:"13:15",ttl:"Stop babysitting your agents",spk:"Sid Bidasaria",desc:"Stop babysitting your AI and start orchestrating it. A walkthrough of the workflows Claude Code engineers use to get the most out of the agent."},
+      {id:"w4",col:"ws",tr:"p",s:"13:30",e:"14:15",ttl:"AI with Claude on AWS: From code to orchestration",spk:"Kazuya Iwami",ja:1,desc:"In 45 minutes you'll stand up Claude Code in Amazon Bedrock, teach it your team's conventions with CLAUDE.md, and turn your everyday workflows into reusable agent skills. You'll leave with a working, team-tuned agentic dev environment on Bedrock."},
+      {id:"m4",col:"main",tr:"r",s:"13:50",e:"14:20",ttl:"Rakuten's AI-nization: Autonomy × empowerment",spk:"Yusuke Kaji",ja:1,desc:"At Rakuten, we evaluate the value of AI agent along two dimensions: how autonomously an agent can run, and how broadly it can empower people across our business. This session shares the wins and challenges we've encountered driving AI-nization across the company — how we evaluate models to maximize business value, why the ceiling is set by how work is structured rather than by model intelligence, and how we turn AI memory into a corporate asset. With real examples from production."},
+      {id:"b4",col:"brk",tr:"r",s:"13:50",e:"14:20",ttl:"The thinking lever",spk:"Donny Greenberg",desc:"Adaptive thinking and effort controls give developers a new decision: how much should Claude reason for a given task? This session covers thinking budgets, effort levels, and the cost, latency, and quality tradeoffs involved."},
+      {id:"w5",col:"ws",tr:"p",s:"14:30",e:"15:15",ttl:"Build a production-ready agent with Claude Managed Agents",spk:"Gabe Cemaj",desc:"A hands-on build session for Claude Managed Agents. You'll deploy a production-ready agent from scratch, then debug and monitor it live in the developer console."},
+      {id:"m5",col:"main",tr:"p",s:"14:35",e:"15:05",ttl:"Building an AI-native engineering organization at Mizuho",spk:"Kentaro Someya · Tatsuto Fujii",ja:1,desc:"Mizuho Financial Group is redesigning banking operations on the premise of AI, not just using generative AI for efficiency. Tatsuto Fujii and Kentaro Someya walk through the AI Oriented Architecture (AIOA) and agent platform they built to meet financial-grade governance and auditability, with real examples of moving beyond PoCs using Claude Code, Skills, MCP, and a custom harness — from both management and development-floor perspectives."},
+      {id:"b5",col:"brk",tr:"c",s:"14:35",e:"15:05",ttl:"Running an AI-native engineering org",spk:"Fiona Fung",desc:"When agentic coding goes from individual tool to org-wide default, the tool isn't the hard part…your processes are. Fiona Fung, Leader for Engineering and Product for Claude Code and Cowork, walks through how the bottlenecks changed at Anthropic (review, ownership, hiring) and the norms we rewrote to keep shipping."},
+      {id:"m6",col:"main",tr:"r",s:"15:20",e:"15:50",ttl:"The capability curve",spk:"Theo Chu",desc:"Frontier models are getting more capable, fast. Where the curve is going, and what it means for developers building on Claude."},
+      {id:"b6",col:"brk",tr:"p",s:"15:20",e:"15:50",ttl:"Rebuilding SaaS for AI — where the done-for-you experience finally began",spk:"Ryu Yokoji",ja:1,desc:"freee is rebuilding its product from the ground up to become the SaaS that AI finds easiest to use — so back-office work finishes itself and only the outcome reaches the customer. Co-founder and CAIO Ryu Yokoji walks through the design philosophy behind freee-mcp (released as official OSS), the guardrails that let AI fully run core operations like accounting and payroll, and the shift of customers becoming builders."},
+      {id:"w6",col:"ws",tr:"p",s:"15:30",e:"16:15",ttl:"Build AI agents using Claude in Microsoft Foundry",spk:"Madoka Chiyoda",ja:1,desc:"In this hands-on workshop, you'll provision Claude in Microsoft Foundry, connect it to a real MCP server with Claude Code, and build a working agent. You'll leave with running code and a cupcake to prove it."},
+      {id:"m7",col:"main",tr:"r",s:"16:05",e:"16:35",ttl:"Fit-for-purpose model selection: A work-specific eval loop for enterprise adoption",spk:"Yuki Kitamura",ja:1,desc:"NRI runs continuous, business-perspective model evaluations across industries and business types, beyond standard LLM benchmarks to give clients the right model for each release. Yuki Kitamura, General Manager, shares NRI's evaluation-first approach — having assessed Claude's enterprise suitability from the earliest stages and become one of Japan's first certified Amazon Bedrock resellers — including frameworks for evaluation-driven design in the agentic era."},
+      {id:"b7",col:"brk",tr:"p",s:"16:05",e:"16:35",ttl:"Building with Claude on Google Cloud",spk:"Ivan Nardini · Kaz Sato",ja:1,desc:"A live build from zero to deployed in thirty minutes. We'll build a feedback app spanning five roles and the full software lifecycle, using Claude and Google Cloud alongside subagents, MCP servers, and custom skills. You can test the finished app at the end of the session."},
+      {id:"w7",col:"ws",tr:"c",s:"16:30",e:"17:15",ttl:"Build a proactive agent workflow with Claude Code",spk:"Ash Prabaker · Christian Ryan",desc:"Routines turn Claude Code into a proactive teammate that reads your repo and opens a PR before you've opened your laptop. You'll see one built end to end, learn the trigger, context, and steering decisions behind any routine, and leave one /schedule command away from your first."},
+      {id:"m8",col:"main",tr:"p",s:"16:50",e:"17:20",ttl:"Getting more out of the Claude Platform",spk:"Brad Abrams",desc:"Cut cost, manage context, boost intelligence. In this session, we'll show you how to put our latest platform capabilities to work. Through live demos you'll see what great prompt caching looks like, learn to keep context lean for long-running agents with tool search, programmatic tool calling, and compaction, and use the advisor strategy for a cost-effective intelligence boost."},
+      {id:"b8",col:"brk",tr:"c",s:"16:50",e:"17:20",ttl:"Toward human-on-the-loop — How Mercari is transforming our software development into AI-native",spk:"Yu Nakai",ja:1,desc:"At Mercari, 100% of employees use AI and 70% of production code is AI-involved — but expertise had become trapped in individual chat logs. Yu Nakai shares how Mercari built Agent-Spec Driven Development (ASDD) and an Agent Harness to shift from Human-in-the-Loop to Human-on-the-Loop, lifting PR throughput ~1.6x for high-AI-usage engineers and turning individual-bound agents into team-shared ones across the SDLC."},
+      {id:"w8",col:"ws",tr:"r",s:"17:30",e:"18:15",ttl:"The prompting playbook",spk:"Hannah Moran",desc:"How to apply core prompting principles to agentic systems that plan, act, and adapt."},
+      {id:"m9",col:"main",tr:"s",s:"17:35",e:"18:05",ttl:"The democratization of software development, and the future of the Japanese community",spk:"Junichiro Tsuji",ja:1,desc:'The barrier to building software has fallen, and the real constraint has moved from "can you code?" to "can you put the problem into words?" Drawing on the global Built with Opus hackathon, where four of the top five winners weren\'t professional developers, and on how companies are adopting AI both top-down and bottom-up, Jun Tsuji closes Day 1 with what this shift means for Japan and how to get more involved in the Japanese Claude Community.'},
+      {id:"rc",col:"all",tr:"s",s:"18:00",e:"20:00",ttl:"Evening reception"}
+    ]
+  },
+  day2:{
+    label:"Code with Claude: Extended Tokyo",dateStr:"2026-06-11",
+    meta:["June 11, 2026","Tokyo, Japan","08:30 – 18:00 JST","英日同時通訳あり"],
+    S0:510,E0:1080,PX:1.9,storageKey:"cwc_tokyo_2026_day2",
+    cols:[["f","Founder stage","Founder stories"],["b","Builder stage","Builder deep-dives"],["w","Workshops","Hands-on"]],
+    colors:[["f","Founder"],["b","Builder"],["w","Workshop"]],
+    data:[
+      {id:"bk",col:"all",tr:"s",s:"08:30",e:"09:30",ttl:"Check-in & breakfast"},
+      {id:"kn",col:"all",tr:"s",s:"09:30",e:"09:45",ttl:"Opening keynote",spk:"Angela Jiang · Cat Wu · Katelyn Lesse"},
+      {id:"f1",col:"f",tr:"f",s:"10:00",e:"10:30",ttl:"Claude Code native company building: How GenerativeX rewired every function around AI",spk:"Rei Araki",ja:1,desc:"GenerativeX rewired every function around AI, pushing Claude Code beyond engineering into sales, delivery, and operations. This session covers the architecture and org-design decisions behind it, plus three specific failures with Skills, Subagents, and MCP so attendees walk away knowing what works, what breaks, and where to start in their own org."},
+      {id:"b1",col:"b",tr:"b",s:"10:00",e:"10:30",ttl:"What happens when domain experts can finally build",spk:"Jason Tangen",desc:"A cognitive science professor with 20 years of research in expertise, decision-making, and learning used Claude Code to ship three production tools in six months. This talk is about what happens when deep domain knowledge meets AI-native tooling, and why the next wave of AI products will come from people who've spent decades understanding the problem."},
+      {id:"w1",col:"w",tr:"w",s:"10:00",e:"10:45",ttl:"How we Claude Code",spk:"Jason Schwartz",desc:"See how Anthropic engineers actually use Claude Code day to day. You'll configure a real repo the way we do internally: project context files, custom commands, hooks, and subagents. Then run the same task stock versus tuned and see the difference for yourself."},
+      {id:"f2",col:"f",tr:"f",s:"10:45",e:"11:15",ttl:"From Claude prototype to production: How Myrealtrip builds and ships AI workflows",spk:"Wonjin Hur",desc:"Using airline refund fee calculation as a case study, Myrealtrip and AICX will share how we solved the latency, consistency, and testability problems that surfaced when the LLM was asked to handle the math. We will then extend the same lens to teams — and discuss what an AI-native operating model looks like when the bottleneck is no longer writing code, but deciding what to ship."},
+      {id:"b2",col:"b",tr:"b",s:"10:45",e:"11:15",ttl:"Aini: Enabling zero-language barrier chat with my girlfriend",spk:"Siyuan Yan (Matt)",desc:"How a solo builder used Claude to create an app to enable him and his girlfriend to bypass language barriers and learn each others' languages."},
+      {id:"w2",col:"w",tr:"w",s:"11:00",e:"11:45",ttl:"Ship your first Managed Agent",spk:"Koki Yoshida",desc:"Build and ship a working incident-investigator agent on Anthropic's Managed Agents platform: define an Agent, Environment, and Session, stream events, and wire up custom tools, all in six functions. You'll leave with a running agent, the mental model for the server-side loop, and a roadmap to production features like subagents, vaults, and memory."},
+      {id:"f3",col:"f",tr:"f",s:"11:30",e:"12:00",ttl:"The 1% problem: How domain expertise + Claude let a 2-person team hit #1 on a global classification benchmark",spk:"Gahee Seo",desc:"Federation's CEO & founder shares how a 2-person team hit #1 on Alibaba's global HS classification benchmark in trade compliance, where one wrong answer costs millions and where domain expertise creates a moat foundation models alone can't cross, built on Claude."},
+      {id:"b3",col:"b",tr:"b",s:"11:30",e:"12:00",ttl:"あなたの日常にClaudeを取り入れる方法 (How to integrate Claude into your daily life)",spk:"Yuta Hayashi",ja:1,desc:"Claude を使ってプロダクト開発のプロセスをどこまで自動化できるかをお話しします。AI 時代に溢れる情報への不安を乗り越え、目の前のプロダクトに活かすための実践的な知見を共有します。"},
+      {id:"w3",col:"w",tr:"w",s:"12:00",e:"12:45",ttl:"Agents that remember",spk:"Sam Jiang",desc:"Every time you close a session, your agent loses everything it learned. In this workshop, you'll wire persistent memory onto a Claude agent and then use Dreaming to batch-consolidate past transcripts into structured recall. By the end of the 45 minutes, you'll have an agent that remembers across sessions and you'll know how to set this up for your own agents."},
+      {id:"ln",col:"all",tr:"s",s:"11:45",e:"13:30",ttl:"Lunch"},
+      {id:"w4",col:"w",tr:"w",s:"13:00",e:"13:45",ttl:"Evals for taste: Hill-climbing a slide-generation agent",spk:"Jonah Dueck",desc:"Built rubric-driven replayable eval system from real user projects giving quality/cost/latency/error/token signals in <6 hours per model change. Evolved into dev flywheel powered by real user dissatisfaction signals."},
+      {id:"f4",col:"f",tr:"f",s:"13:15",e:"13:45",ttl:"The model is ready. The harness is ready. The spec isn't.",spk:"Hitoshi Tsuyuki · Sumiki Hori",ja:1,desc:"After six months of enterprise AI work in Japan, Tsukumo Labs keeps hitting one wall. They turn opt-in desktop traces into reviewed specs that run as Claude-powered agents, and the hard part is segmenting noisy, cross-app activity into stable patterns. For most Claude-powered products, the bottleneck isn't the model or the harness, it's the missing observation layer upstream of every prompt."},
+      {id:"b4",col:"b",tr:"b",s:"13:15",e:"13:45",ttl:"Same model, three different worlds: Japan, India, Australia",spk:"Jason Bigman · Rye Smith · Sumeet Doshi · Yuta Hayashi",desc:"Claude is identical in Tokyo, Mumbai, and Melbourne, but what gets built with it looks completely different. Three builders who anchor their local Claude communities compare ground truth from their scenes: who's actually building, what's taking off in each region, what's still missing, and what should get built next. A bilingual conversation in Japanese and English, moderated by Anthropic's Head of Community."},
+      {id:"f5",col:"f",tr:"f",s:"14:00",e:"14:30",ttl:"Code less, query more: A co-founder's 30-day dive into Claude Code sub-agents",spk:"Kenta Yamamoto",ja:1,desc:"Kenta Yamamoto, Chief Innovation Officer and Co-Founder at primeNumber, has an engineering background but no time to write code as a business lead. He went all in on Claude Code sub-agents for 30 days and found the real unlock wasn't the agent, it was the data layer feeding it. He shares an Orchestrator + Sub-agent pattern that scales beyond coding, plus an honest log of wins and misses."},
+      {id:"b5",col:"b",tr:"b",s:"14:00",e:"14:30",ttl:"How I built a legal platform for 280 million people at the Claude Code Hackathon",spk:"Ilham Firdausi Putra",desc:"How a solo developer used Claude Code to build a national legal platform for 280 million Indonesians in one week at the Claude Code Hackathon, going from idea to 1M+ structured articles and national press coverage."},
+      {id:"w5",col:"w",tr:"w",s:"14:00",e:"14:45",ttl:"Tool, skill, or subagent? Decomposing an agent that outgrew its prompt",spk:"Karan Sampath",desc:"When does logic belong in a tool, a skill, or a subagent? You'll learn the decision framework by doing: inherit a 402-line inventory agent, decompose it live on Claude Managed Agents, and run evals after every change to see what flips."},
+      {id:"b6",col:"b",tr:"b",s:"14:45",e:"15:15",ttl:"Blood, code & Claude: How I shipped a life-saving app solo",spk:"Sumeet Doshi",desc:"Every minute a doctor can't find blood a life is at risk. Sumeet will share how he went from seeing this crisis to shipping HaemoLink — a real mobile app currently in active pilot with doctors — completely solo, with Claude as his build partner."},
+      {id:"w6",col:"w",tr:"w",s:"15:00",e:"15:45",ttl:"Agent Battle: Mine the most diamonds in 45 minutes",spk:"Liam Plambeck",desc:"Head-to-head agent build-off on a shared game harness. Build an agent, submit runs, watch scores and a live game feed stream to the leaderboard on the big screen. Can you build the top-performing agent in the room?"},
+      {id:"b7",col:"b",tr:"b",s:"15:30",e:"16:00",ttl:"Manager 11: How I finally shipped my dream football management game with Claude",spk:"Rye Smith",desc:"Manager 11 is a football management game Rye Smith first dreamed up as a teenager and kept returning to for years, until Claude made it real. This is the honest story of how one founder used AI to build a complex, living game from vision to shipped product, covering the UI/UX decisions, the technical engine underneath, and what building with Claude actually feels like day to day."},
+      {id:"rc",col:"all",tr:"s",s:"15:45",e:"18:00",ttl:"Closing reception"}
+    ]
+  }
+};
+const tm=t=>{const[h,m]=t.split(':').map(Number);return h*60+m;};
+const ov=(a,b)=>tm(a.s)<tm(b.e)&&tm(a.e)>tm(b.s);
+const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+let curDay=null;
+const ckByDay={day1:loadCk("day1"),day2:loadCk("day2")};
+let hidden=new Set();
+let conflicts={};
+let modalId=null;
+function loadCk(d){try{return new Set(JSON.parse(localStorage.getItem(DAYS[d].storageKey)||'[]'));}catch(e){return new Set();}}
+function saveCk(){try{localStorage.setItem(DAYS[curDay].storageKey,JSON.stringify([...ckByDay[curDay]]));}catch(e){}}
+const D=()=>DAYS[curDay];
+const ck=()=>ckByDay[curDay];
+const byId=id=>D().data.find(x=>x.id===id);
+function computeConflicts(){
+  conflicts={};
+  const list=D().data.filter(d=>d.col!=='all');
+  list.forEach(a=>{conflicts[a.id]=new Set();list.forEach(b=>{if(a.id!==b.id&&ov(a,b))conflicts[a.id].add(b.id);});});
+}
+function pickInitialDay(){
+  const h=location.hash.replace('#','');
+  if(h==='day1'||h==='day2')return h;
+  try{const n=new Date();if(n.getFullYear()===2026&&n.getMonth()===5){if(n.getDate()===11)return'day2';if(n.getDate()===10)return'day1';}}catch(e){}
+  return'day1';
+}
+function switchDay(d){
+  if(d===curDay)return;
+  curDay=d;hidden=new Set();computeConflicts();
+  try{history.replaceState(null,'',location.pathname+location.search+'#'+d);}catch(e){}
+  document.getElementById('evTitle').textContent=D().label;
+  document.getElementById('evMeta').innerHTML=D().meta.map((m,i)=>(i?'<span class="ev-dot"></span>':'')+'<span>'+esc(m)+'</span>').join('');
+  const t1=document.getElementById('tab-day1'),t2=document.getElementById('tab-day2');
+  t1.classList.toggle('on',d==='day1');t1.setAttribute('aria-selected',d==='day1');
+  t2.classList.toggle('on',d==='day2');t2.setAttribute('aria-selected',d==='day2');
+  buildLegend();buildPC();buildSP();refresh();closeModal();
+  window.scrollTo(0,0);
+}
+function buildLegend(){
+  document.getElementById('lgnd').innerHTML=D().colors.map(([k,name])=>
+    `<button class="chip t-${k}" id="chip-${k}" onclick="toggleFilter('${k}')"><span class="ldot"></span>${esc(name)}</button>`).join('');
+}
+function toggleFilter(k){
+  const chip=document.getElementById('chip-'+k);
+  if(hidden.has(k)){hidden.delete(k);chip.classList.remove('dim');}else{hidden.add(k);chip.classList.add('dim');}
+  document.querySelectorAll('[data-tr="'+k+'"]').forEach(e=>e.classList.toggle('dim-f',hidden.has(k)));
+}
+function buildPC(){
+  const d=D(),S0=d.S0,E0=d.E0,PX=d.PX,HDR=46;
+  const yp=t=>HDR+(tm(t)-S0)*PX, hp=(s,e)=>Math.max((tm(e)-tm(s))*PX-3,17);
+  const tot=(E0-S0)*PX+HDR+22;
+  const axis=document.getElementById('axis');axis.innerHTML='';axis.style.height=tot+'px';
+  for(let m=S0;m<=E0;m+=30){
+    const y=HDR+(m-S0)*PX,hr=m%60===0;
+    const t=document.createElement('div');t.className='tick';t.style.top=y+'px';
+    const hh=Math.floor(m/60),mm=String(m%60).padStart(2,'0');
+    t.innerHTML=`<span class="tlb${hr?' hr':''}">${hh}:${mm}</span><span class="tln${hr?' hr':''}"></span>`;
+    axis.appendChild(t);
+  }
+  const cols=document.getElementById('cols');cols.innerHTML='';
+  const colEl={};
+  d.cols.forEach(([key,name,sub])=>{
+    const c=document.createElement('div');c.className='col';c.style.minHeight=tot+'px';
+    c.innerHTML=`<div class="col-hdr"><div class="col-hdr-n">${esc(name)}</div><div class="col-hdr-d">${esc(sub)}</div></div>`;
+    cols.appendChild(c);colEl[key]=c;
+  });
+  const canvas=document.getElementById('canvas');canvas.style.minHeight=tot+'px';
+  canvas.querySelectorAll('.sp-band').forEach(e=>e.remove());
+  d.data.forEach(x=>{
+    if(x.col==='all'){
+      const y=yp(x.s),h=hp(x.s,x.e);
+      const band=document.createElement('div');band.className='sp-band';band.id='pc-'+x.id;
+      band.style.cssText=`top:${y}px;height:${h}px;`;
+      band.setAttribute('role','button');band.setAttribute('tabindex','0');band.setAttribute('aria-label',x.ttl);
+      band.innerHTML=`<div class="sp-label"><span class="sp-ck"><i class="ti ti-check"></i></span><span class="sp-nm">${esc(x.ttl)}</span>${x.spk?`<span class="sp-sk">· ${esc(x.spk)}</span>`:''}</div>`;
+      band.onclick=()=>toggleCheck(x.id);
+      band.onkeydown=(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleCheck(x.id);}};
+      canvas.appendChild(band);
+    }else{
+      const el=document.createElement('div');el.className=`blk t-${x.tr}`;el.id='pc-'+x.id;el.dataset.tr=x.tr;
+      el.setAttribute('tabindex','0');el.setAttribute('role','button');el.setAttribute('aria-label',x.ttl);
+      el.style.cssText=`top:${yp(x.s)}px;height:${hp(x.s,x.e)}px;`;
+      const trkName=(d.colors.find(c=>c[0]===x.tr)||[])[1];
+      el.innerHTML=`<div class="blk-in"><div class="blk-t">${esc(x.ttl)}</div>${x.spk?`<div class="blk-s">${esc(x.spk)}</div>`:''}<div class="blk-tags">${trkName?`<span class="tag">${esc(trkName)}</span>`:''}${x.ja?'<span class="tag tag-jp">JP</span>':''}</div></div><button class="ckb" aria-label="参加チェック">${CK_SVG}</button>`;
+      el.onclick=()=>openModal(x.id);
+      el.onkeydown=(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openModal(x.id);}};
+      el.querySelector('.ckb').onclick=(e)=>{e.stopPropagation();toggleCheck(x.id);};
+      colEl[x.col].appendChild(el);
+    }
+  });
+}
+function buildSP(){
+  const wrap=document.getElementById('splist');wrap.innerHTML='';
+  const items=[...D().data].sort((a,b)=>tm(a.s)-tm(b.s)||(a.col==='all'?-1:1));
+  let lastStart=null,slot=null;const d=D();const showStage=curDay==='day1';
+  items.forEach(x=>{
+    if(x.col==='all'){
+      lastStart=null;
+      const row=document.createElement('div');row.className='mspecial';row.id='sp-'+x.id;row.setAttribute('role','button');
+      row.innerHTML=`<div class="msp-ck">${CK_SVG}</div><div><div class="msp-tm">${x.s} – ${x.e}</div><div class="msp-t">${esc(x.ttl)}</div></div>`;
+      row.onclick=()=>toggleCheck(x.id);wrap.appendChild(row);return;
+    }
+    if(x.s!==lastStart){
+      lastStart=x.s;
+      const sh=document.createElement('div');sh.className='slot';
+      sh.innerHTML=`<div class="slot-h"><span class="slot-t">${x.s}</span><span class="slot-l"></span></div>`;
+      wrap.appendChild(sh);slot=sh;
+    }
+    const trkName=(d.colors.find(c=>c[0]===x.tr)||[])[1];
+    const stageName=(d.cols.find(c=>c[0]===x.col)||[])[1]||'';
+    const card=document.createElement('div');card.className=`mcard t-${x.tr}`;card.id='sp-'+x.id;card.dataset.tr=x.tr;
+    card.innerHTML=`
+      <div class="mcard-main">
+        <div class="mcard-body">
+          <div class="mcard-time">${x.s} – ${x.e}</div>
+          <div class="mcard-t">${esc(x.ttl)}</div>
+          ${x.spk?`<div class="mcard-s">${esc(x.spk)}</div>`:''}
+          <div class="mcard-tags">
+            ${showStage&&stageName?`<span class="mtag mtag-stg">${esc(stageName)}</span>`:''}
+            <span class="mtag mtag-trk">${esc(trkName||stageName)}</span>
+            ${x.ja?'<span class="mtag mtag-jp">JP</span>':''}
+          </div>
+          <div class="mwarn"><i class="ti ti-alert-triangle" aria-hidden="true"></i>選択中のセッションと時間が重複</div>
+        </div>
+        <div class="mcard-aside">
+          <button class="mckb" aria-label="参加チェック">${CK_SVG}</button>
+          <span class="mchev" aria-hidden="true"><i class="ti ti-chevron-down" aria-hidden="true"></i></span>
+        </div>
+      </div>
+      <div class="mcard-desc"><div class="mcard-desc-in">${x.desc?esc(x.desc):''}</div></div>`;
+    const mainEl=card.querySelector('.mcard-main');
+    mainEl.setAttribute('aria-expanded','false');
+    mainEl.onclick=()=>{
+      const open=card.classList.toggle('exp');
+      mainEl.setAttribute('aria-expanded',String(open));
+    };
+    card.querySelector('.mckb').onclick=(e)=>{e.stopPropagation();toggleCheck(x.id);};
+    slot.appendChild(card);
+  });
+}
+function toggleCheck(id){
+  const set=ck();
+  if(set.has(id)){set.delete(id);}
+  else{(conflicts[id]||new Set()).forEach(cid=>set.delete(cid));set.add(id);}
+  saveCk();refresh();
+  if(modalId===id)updateModalCk();
+}
+function refresh(){
+  const set=ck();
+  D().data.forEach(x=>{
+    const on=set.has(x.id);
+    const conflict=!on&&[...(conflicts[x.id]||[])].some(c=>set.has(c));
+    const pc=document.getElementById('pc-'+x.id);
+    if(pc){pc.classList.toggle('on',on);if(x.col!=='all')pc.classList.toggle('dim',conflict);}
+    const sp=document.getElementById('sp-'+x.id);
+    if(sp){sp.classList.toggle('on',on);sp.classList.toggle('warn',conflict);}
+  });
+  renderSummary();
+}
+function renderSummary(){
+  const set=ck(),sl=document.getElementById('suml'),cnt=document.getElementById('scnt'),clr=document.getElementById('clrb');
+  if(!set.size){sl.innerHTML='<div class="summt">セッションをチェックすると、ここに時系列で並びます</div>';cnt.textContent='';clr.style.display='none';return;}
+  clr.style.display='';
+  const items=D().data.filter(x=>set.has(x.id)).sort((a,b)=>tm(a.s)-tm(b.s));
+  cnt.textContent=` ${items.length}件`;
+  const d=D();
+  sl.innerHTML=items.map(x=>{
+    const trkName=(d.colors.find(c=>c[0]===x.tr)||[])[1]||(d.cols.find(c=>c[0]===x.col)||[])[1]||'Event';
+    return `<div class="srow"><span class="stag t-${x.tr}">${esc(trkName)}</span><span class="stm">${x.s}–${x.e}</span><span class="sttl">${esc(x.ttl)}</span>${x.ja?'<span class="sja">JP</span>':''}<button class="srm" onclick="toggleCheck('${x.id}')" aria-label="削除">✕</button></div>`;
+  }).join('');
+}
+function clearAll(){ck().clear();saveCk();refresh();}
+function openModal(id){
+  const x=byId(id);if(!x)return;modalId=id;
+  const d=D();
+  const trkName=(d.colors.find(c=>c[0]===x.tr)||[])[1];
+  const stageName=(d.cols.find(c=>c[0]===x.col)||[])[1]||'';
+  document.getElementById('modalTime').textContent=`${x.s} – ${x.e}`;
+  document.getElementById('modalT').textContent=x.ttl;
+  document.getElementById('modal').className='modal t-'+x.tr;
+  const meta=[];
+  if(stageName)meta.push(`<span class="mtag mtag-stg">${esc(stageName)}</span>`);
+  if(trkName&&trkName!==stageName)meta.push(`<span class="mtag mtag-trk">${esc(trkName)}</span>`);
+  if(x.ja)meta.push('<span class="mtag mtag-jp">presented in Japanese</span>');
+  document.getElementById('modalMeta').innerHTML=meta.join('');
+  document.getElementById('modalSpk').innerHTML=x.spk?`<i class="ti ti-user" aria-hidden="true"></i>${esc(x.spk)}`:'';
+  document.getElementById('modalDesc').textContent=x.desc||'';
+  updateModalCk();
+  const bd=document.getElementById('modalBd');bd.classList.add('open');
+  requestAnimationFrame(()=>document.getElementById('modal').querySelector('.modal-close').focus());
+  document.addEventListener('keydown',escClose);
+}
+function updateModalCk(){
+  const btn=document.getElementById('modalCk');const on=ck().has(modalId);
+  btn.classList.toggle('on',on);
+  btn.innerHTML=on?'<i class="ti ti-circle-check-filled"></i>参加予定に追加済み':'<i class="ti ti-circle-plus"></i>参加予定に追加';
+}
+function modalToggle(){if(modalId)toggleCheck(modalId);}
+function closeModal(){
+  document.getElementById('modalBd').classList.remove('open');
+  const prev=modalId;modalId=null;document.removeEventListener('keydown',escClose);
+  if(prev){const el=document.getElementById('pc-'+prev);if(el)el.focus();}
+}
+function escClose(e){if(e.key==='Escape')closeModal();}
+document.getElementById('foot').innerHTML=
+  `Session titles and descriptions are from the official <a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">Code with Claude</a> event pages. `+
+  `This is an unofficial personal tool; please refer to the official schedule for the latest information.<br>`+
+  `非公式の個人制作ツールです。最新情報は公式ページをご確認ください。チェック内容はこの端末にのみ保存されます。`;
+function setStick(){const h=document.getElementById('stick');if(h)document.documentElement.style.setProperty('--stick',h.offsetHeight+'px');}
+window.addEventListener('resize',setStick);
+switchDay(pickInitialDay());
+setStick();
+window.addEventListener('hashchange',()=>{const h=location.hash.replace('#','');if((h==='day1'||h==='day2')&&h!==curDay)switchDay(h);});
+</script>
+</body>
+</html>

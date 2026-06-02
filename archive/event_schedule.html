@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code with Claude: Extended Tokyo — Schedule</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#ffffff;--bg2:#f5f5f3;--bg3:#efefec;
+  --text:#1a1a18;--text2:#5f5e5a;--text3:#9b9a94;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.2);
+  --teal:#1D9E75;--teal-bg:#E1F5EE;--teal-text:#085041;--teal-sp:#0F6E56;
+  --purple:#7F77DD;--purple-bg:#EEEDFE;--purple-text:#3C3489;--purple-sp:#534AB7;
+  --coral:#D85A30;--coral-bg:#FAECE7;--coral-text:#712B13;--coral-sp:#993C1D;
+  --gray-bg:#F1EFE8;--gray-text:#444441;--gray-border:#C8C5BC;
+  --r:8px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1a;--bg2:#252522;--bg3:#2c2c29;
+    --text:#f0efe8;--text2:#b4b2a9;--text3:#6e6d67;
+    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.18);
+    --teal-bg:#0a3d2e;--teal-text:#9FE1CB;--teal-sp:#5DCAA5;
+    --purple-bg:#1e1954;--purple-text:#CECBF6;--purple-sp:#AFA9EC;
+    --coral-bg:#3a1508;--coral-text:#F5C4B3;--coral-sp:#F0997B;
+    --gray-bg:#2C2C2A;--gray-text:#D3D1C7;--gray-border:#5F5E5A;
+  }
+}
+html,body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;min-height:100vh;}
+.page{max-width:680px;margin:0 auto;padding:1.5rem 1rem 3rem;}
+header{margin-bottom:1.5rem;}
+.event-label{font-size:11px;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px;}
+h1{font-size:18px;font-weight:500;color:var(--text);margin-bottom:4px;}
+.date-line{font-size:12px;color:var(--text2);}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.legend{display:flex;gap:8px;flex-wrap:wrap;}
+.lchip{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text2);padding:3px 8px;border-radius:20px;border:0.5px solid var(--border);background:var(--bg2);}
+.lbar{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.hint{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:3px;}
+.canvas-wrap{display:flex;gap:0;width:100%;}
+.axis{width:44px;flex-shrink:0;position:relative;}
+.tick{position:absolute;right:0;left:0;display:flex;align-items:flex-start;}
+.tlb{font-size:9px;color:var(--text3);width:38px;text-align:right;padding-right:4px;line-height:1;margin-top:-5px;}
+.tlb.hr{color:var(--text2);font-weight:500;}
+.tln{position:absolute;left:40px;right:-8px;border-top:0.5px dashed var(--border);}
+.tln.hr{border-top-style:solid;border-color:var(--border2);}
+.tracks{flex:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;position:relative;}
+.col{position:relative;}
+.col-hdr{font-size:11px;font-weight:500;text-align:center;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;letter-spacing:0.02em;margin-bottom:0;}
+.hdr-f{background:var(--teal-bg);color:var(--teal-text);}
+.hdr-b{background:var(--purple-bg);color:var(--purple-text);}
+.hdr-w{background:var(--coral-bg);color:var(--coral-text);}
+.blk{position:absolute;left:0;right:0;border-radius:5px;padding:4px 7px 4px 8px;overflow:hidden;cursor:pointer;transition:opacity .12s,transform .1s;-webkit-tap-highlight-color:transparent;}
+.blk:hover{opacity:.82;transform:translateY(-1px);}
+.blk:active{transform:scale(.99);}
+.blk-f{background:var(--teal-bg);border-left:2.5px solid var(--teal);}
+.blk-b{background:var(--purple-bg);border-left:2.5px solid var(--purple);}
+.blk-w{background:var(--coral-bg);border-left:2.5px solid var(--coral);}
+.blk-f.on{outline:2px solid var(--teal);outline-offset:0;}
+.blk-b.on{outline:2px solid var(--purple);outline-offset:0;}
+.blk-w.on{outline:2px solid var(--coral);outline-offset:0;}
+.ttl{font-size:10px;font-weight:500;line-height:1.35;padding-right:12px;}
+.ttl-f{color:var(--teal-text);}
+.ttl-b{color:var(--purple-text);}
+.ttl-w{color:var(--coral-text);}
+.spk{font-size:9px;margin-top:1px;line-height:1.2;}
+.spk-f{color:var(--teal-sp);}
+.spk-b{color:var(--purple-sp);}
+.spk-w{color:var(--coral-sp);}
+.ckbadge{position:absolute;top:4px;right:4px;width:13px;height:13px;border-radius:50%;display:none;align-items:center;justify-content:center;}
+.blk-f.on .ckbadge{display:flex;background:var(--teal);}
+.blk-b.on .ckbadge{display:flex;background:var(--purple);}
+.blk-w.on .ckbadge{display:flex;background:var(--coral);}
+.jatag{font-size:8px;color:var(--text3);margin-left:2px;font-weight:400;}
+.sp-shade{position:absolute;left:0;right:0;border-radius:5px;pointer-events:none;z-index:4;background:rgba(241,239,232,0.55);border:0.5px dashed var(--gray-border);}
+@media(prefers-color-scheme:dark){.sp-shade{background:rgba(44,44,42,0.55);}}
+.sp-lbl{position:absolute;left:0;right:0;z-index:10;pointer-events:none;display:flex;align-items:center;justify-content:center;}
+.sp-tag{font-size:10px;font-weight:500;color:var(--gray-text);background:var(--bg);border:0.5px solid var(--gray-border);border-radius:20px;padding:2px 10px;white-space:nowrap;}
+.sum{margin-top:1.5rem;border-top:0.5px solid var(--border);padding-top:1rem;}
+.sum-hdr{font-size:12px;font-weight:500;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.cnt{font-size:11px;font-weight:400;color:var(--text3);}
+.sum-empty{font-size:12px;color:var(--text3);}
+.srow{display:flex;align-items:baseline;gap:8px;padding:5px 0;border-bottom:0.5px solid var(--border);font-size:12px;}
+.srow:last-child{border-bottom:none;}
+.stag{font-size:9px;font-weight:500;padding:2px 6px;border-radius:3px;flex-shrink:0;line-height:1.4;}
+.stm{color:var(--text3);flex-shrink:0;font-size:11px;white-space:nowrap;}
+.stitle{color:var(--text);}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="event-label">June 11, 2026 · Tokyo</div>
+    <h1>Code with Claude: Extended Tokyo</h1>
+    <div class="date-line">スケジュール — タップして参加セッションをチェック</div>
+  </header>
+
+  <div class="topbar">
+    <div class="legend">
+      <div class="lchip"><div class="lbar" style="background:#1D9E75"></div>Founder</div>
+      <div class="lchip"><div class="lbar" style="background:#7F77DD"></div>Builder</div>
+      <div class="lchip"><div class="lbar" style="background:#D85A30"></div>Workshop</div>
+    </div>
+    <div class="hint"><i class="ti ti-circle-check" style="font-size:13px;"></i>タップで参加チェック</div>
+  </div>
+
+  <div class="canvas-wrap">
+    <div class="axis" id="axis"></div>
+    <div class="tracks" id="tracks">
+      <div class="col" id="cf"><div class="col-hdr hdr-f">Founder</div></div>
+      <div class="col" id="cb"><div class="col-hdr hdr-b">Builder</div></div>
+      <div class="col" id="cw"><div class="col-hdr hdr-w">Workshop</div></div>
+    </div>
+  </div>
+
+  <div class="sum">
+    <div class="sum-hdr">
+      <i class="ti ti-calendar-check" style="font-size:14px;"></i>
+      参加予定
+      <span class="cnt" id="cnt"></span>
+    </div>
+    <div id="suml"><span class="sum-empty">セッションをタップして追加</span></div>
+  </div>
+</div>
+
+<script>
+const S0=8*60+30,E0=18*60+0,PX=1.9,HDR=30;
+const tm=t=>{const[h,m]=t.split(':').map(Number);return h*60+m;};
+const yp=t=>HDR+(tm(t)-S0)*PX;
+const hp=(s,e)=>Math.max((tm(e)-tm(s))*PX-3,16);
+
+const data=[
+  {id:'bk',tr:'s',col:'all',s:'08:30',e:'09:30',ttl:'Check-in & Breakfast'},
+  {id:'kn',tr:'s',col:'all',s:'09:30',e:'09:45',ttl:'Opening keynote',spk:'Angela Jiang / Cat Wu / Katelyn Lesse'},
+  {id:'f1',tr:'f',col:'f',s:'10:00',e:'10:30',ttl:'Claude Code native company building: GenerativeX',spk:'Rei Araki',ja:1},
+  {id:'b1',tr:'b',col:'b',s:'10:00',e:'10:30',ttl:'What happens when domain experts can finally build',spk:'Jason Tangen'},
+  {id:'w1',tr:'w',col:'w',s:'10:00',e:'10:45',ttl:'How we Claude Code',spk:'Jason Schwartz'},
+  {id:'f2',tr:'f',col:'f',s:'10:45',e:'11:15',ttl:'Myrealtrip: prototype to production',spk:'Wonjin Hur'},
+  {id:'b2',tr:'b',col:'b',s:'10:45',e:'11:15',ttl:'Aini: zero-language barrier chat',spk:'Siyuan Yan (Matt)'},
+  {id:'w2',tr:'w',col:'w',s:'11:00',e:'11:45',ttl:'Ship your first Managed Agent',spk:'Koki Yoshida'},
+  {id:'f3',tr:'f',col:'f',s:'11:30',e:'12:00',ttl:'The 1% problem: 2-person team, #1 benchmark',spk:'Gahee Seo'},
+  {id:'b3',tr:'b',col:'b',s:'11:30',e:'12:00',ttl:'あなたの日常にClaudeを取り入れる',spk:'Yuta Hayashi',ja:1},
+  {id:'w3',tr:'w',col:'w',s:'12:00',e:'12:45',ttl:'Agents that remember',spk:'Sam Jiang'},
+  {id:'ln',tr:'s',col:'all',s:'11:45',e:'13:30',ttl:'Lunch'},
+  {id:'w4',tr:'w',col:'w',s:'13:00',e:'13:45',ttl:'Evals for taste: slide-generation agent',spk:'Jonah Dueck'},
+  {id:'f4',tr:'f',col:'f',s:'13:15',e:'13:45',ttl:"The model is ready. The spec isn't.",spk:'Tsuyuki / Hori'},
+  {id:'b4',tr:'b',col:'b',s:'13:15',e:'13:45',ttl:'Same model, three worlds: JP / IN / AU',spk:'Bigman / Smith / Doshi / Hayashi'},
+  {id:'f5',tr:'f',col:'f',s:'14:00',e:'14:30',ttl:'Code less, query more: sub-agents',spk:'Kenta Yamamoto'},
+  {id:'b5',tr:'b',col:'b',s:'14:00',e:'14:30',ttl:'Legal platform for 280M people',spk:'Ilham Firdausi Putra'},
+  {id:'w5',tr:'w',col:'w',s:'14:00',e:'14:45',ttl:'Tool, skill, or subagent?',spk:'Karan Sampath'},
+  {id:'b6',tr:'b',col:'b',s:'14:45',e:'15:15',ttl:'Blood, code & Claude: life-saving app',spk:'Sumeet Doshi'},
+  {id:'w6',tr:'w',col:'w',s:'15:00',e:'15:45',ttl:'Agent Battle: mine diamonds in 45 min',spk:'Liam Plambeck'},
+  {id:'b7',tr:'b',col:'b',s:'15:30',e:'16:00',ttl:'Manager 11: football game with Claude',spk:'Rye Smith'},
+  {id:'rc',tr:'s',col:'all',s:'15:45',e:'18:00',ttl:'Closing reception'},
+];
+
+const STORAGE_KEY='cwc_ext_tokyo_checked';
+const LEGACY_STORAGE_KEY='cwc_tokyo_checked';
+const stored=localStorage.getItem(STORAGE_KEY)||localStorage.getItem(LEGACY_STORAGE_KEY)||'[]';
+const ck=new Set(JSON.parse(stored));
+if(!localStorage.getItem(STORAGE_KEY)&&localStorage.getItem(LEGACY_STORAGE_KEY)){
+  localStorage.setItem(STORAGE_KEY,stored);
+}
+const colEl={f:document.getElementById('cf'),b:document.getElementById('cb'),w:document.getElementById('cw')};
+
+function build(){
+  const totalPx=(E0-S0)*PX+HDR+20;
+  Object.values(colEl).forEach(c=>c.style.minHeight=totalPx+'px');
+  const ax=document.getElementById('axis');
+  ax.style.height=totalPx+'px';
+  for(let m=S0;m<=E0;m+=30){
+    const y=HDR+(m-S0)*PX;
+    const isHr=m%60===0;
+    const d=document.createElement('div');
+    d.className='tick';d.style.top=y+'px';
+    const hh=Math.floor(m/60),mm=(m%60).toString().padStart(2,'0');
+    d.innerHTML=`<span class="tlb${isHr?' hr':''}">${hh}:${mm}</span><span class="tln${isHr?' hr':''}"></span>`;
+    ax.appendChild(d);
+  }
+  data.filter(d=>d.col!=='all').forEach(d=>{
+    const col=colEl[d.col];
+    const el=document.createElement('div');
+    el.id='b'+d.id;
+    el.className=`blk blk-${d.tr}${ck.has(d.id)?' on':''}`;
+    el.style.cssText=`top:${yp(d.s)}px;height:${hp(d.s,d.e)}px;`;
+    el.innerHTML=`<div class="ttl ttl-${d.tr}">${d.ttl}${d.ja?'<span class="jatag">JP</span>':''}</div>${d.spk?`<div class="spk spk-${d.tr}">${d.spk}</div>`:''}<div class="ckbadge"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><polyline points="1,3.5 3.5,6 8,1" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>`;
+    el.addEventListener('click',()=>toggle(d));
+    col.appendChild(el);
+  });
+  const tr=document.getElementById('tracks');
+  data.filter(d=>d.col==='all').forEach(d=>{
+    const y=yp(d.s),h=hp(d.s,d.e)+3;
+    ['f','b','w'].forEach(k=>{
+      const sh=document.createElement('div');
+      sh.className='sp-shade';sh.style.cssText=`top:${y}px;height:${h}px;`;
+      colEl[k].appendChild(sh);
+    });
+    const lbl=document.createElement('div');
+    lbl.className='sp-lbl';lbl.style.cssText=`top:${y+h/2-11}px;`;
+    lbl.innerHTML=`<div class="sp-tag">${d.ttl}</div>`;
+    tr.appendChild(lbl);
+  });
+  render();
+}
+
+function toggle(d){
+  const el=document.getElementById('b'+d.id);
+  if(ck.has(d.id)){ck.delete(d.id);el.classList.remove('on');}
+  else{ck.add(d.id);el.classList.add('on');}
+  localStorage.setItem(STORAGE_KEY,JSON.stringify([...ck]));
+  render();
+}
+
+function render(){
+  const suml=document.getElementById('suml');
+  const cnt=document.getElementById('cnt');
+  if(!ck.size){suml.innerHTML='<span class="sum-empty">セッションをタップして追加</span>';cnt.textContent='';return;}
+  const items=data.filter(d=>ck.has(d.id)).sort((a,b)=>tm(a.s)-tm(b.s));
+  cnt.textContent=`${items.length}件`;
+  const BG={f:'background:#E1F5EE;color:#085041;',b:'background:#EEEDFE;color:#3C3489;',w:'background:#FAECE7;color:#712B13;'};
+  const LM={f:'F',b:'B',w:'W'};
+  suml.innerHTML=items.map(d=>`<div class="srow"><span class="stag" style="${BG[d.tr]}">${LM[d.tr]}</span><span class="stm">${d.s}–${d.e}</span><span class="stitle">${d.ttl}</span></div>`).join('');
+}
+
+build();
+</script>
+</body>
+</html>

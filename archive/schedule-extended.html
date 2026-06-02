@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Code with Claude: Extended Tokyo — Schedule</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#ffffff;--sf:#f7f6f3;--sf2:#f0efe9;
+  --tx:#181816;--tx2:#5a5955;--tx3:#9a9890;
+  --bd:rgba(0,0,0,0.10);--bd2:rgba(0,0,0,0.18);
+  --f:#1D9E75;--fl:#E1F5EE;--fd:#085041;--fm:#0F6E56;--b:#7F77DD;--bl:#EEEDFE;--bd:#3C3489;--bm:#534AB7;--w:#D85A30;--wl:#FAECE7;--wd:#712B13;--wm:#993C1D;
+  --spbd:#C8C5BC;--sptx:#5F5E5A;
+  --hdr:42px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#181816;--sf:#222220;--sf2:#2a2a27;
+  --tx:#eeede6;--tx2:#b0aea6;--tx3:#68665e;
+  --bd:rgba(255,255,255,0.09);--bd2:rgba(255,255,255,0.18);
+  --fl:#083d2e;--fd:#9FE1CB;--fm:#5DCAA5;--bl:#1c1950;--bd:#CECBF6;--bm:#AFA9EC;--wl:#391507;--wd:#F5C4B3;--wm:#F0997B;
+  --spbd:#5a5955;--sptx:#b0aea6;
+}}
+html,body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;-webkit-font-smoothing:antialiased;}
+.page{max-width:740px;margin:0 auto;padding:0 0 4rem;}
+.ev-header{padding:1.75rem 1.25rem 1.25rem;border-bottom:0.5px solid var(--bd);}
+.ev-eyebrow{font-size:11px;letter-spacing:0.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:6px;}
+.ev-title{font-size:22px;font-weight:500;color:var(--tx);line-height:1.2;margin-bottom:4px;}
+.ev-meta{font-size:12px;color:var(--tx2);display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.ev-dot{width:3px;height:3px;border-radius:50%;background:var(--bd2);}
+.ctrl{padding:12px 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:0.5px solid var(--bd);background:var(--bg);position:sticky;top:0;z-index:100;}
+.lgnd{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--tx2);padding:4px 9px;border-radius:20px;border:0.5px solid var(--bd);background:var(--sf);cursor:pointer;transition:all .15s;user-select:none;-webkit-tap-highlight-color:transparent;}
+.chip:hover{border-color:var(--bd2);}
+.chip.dim{opacity:.35;}
+.ldot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+.hint{font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.tl-outer{display:flex;padding:12px 1.25rem 0;}
+.axis{width:42px;flex-shrink:0;position:relative;}
+.tick{position:absolute;right:0;left:0;display:flex;align-items:flex-start;pointer-events:none;}
+.tlb{font-size:9px;width:36px;text-align:right;padding-right:5px;line-height:1;margin-top:-5px;color:var(--tx3);}
+.tlb.hr{color:var(--tx2);font-weight:500;}
+.tln{position:absolute;left:38px;right:-12px;border-top:0.5px dashed var(--bd);}
+.tln.hr{border-top-style:solid;border-color:var(--bd2);}
+.canvas{flex:1;position:relative;}
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;}
+.col{position:relative;}
+.col-hdr{height:var(--hdr);display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;padding:0 6px;}
+
+.hdr-f{background:var(--fl);}
+.hn-f{color:var(--fd);}
+.hd-f{color:var(--fm);}
+
+.hdr-b{background:var(--bl);}
+.hn-b{color:var(--bd);}
+.hd-b{color:var(--bm);}
+
+.hdr-w{background:var(--wl);}
+.hn-w{color:var(--wd);}
+.hd-w{color:var(--wm);}
+
+.hdr-n{font-size:11px;font-weight:500;line-height:1.3;}
+.hdr-d{font-size:9px;margin-top:2px;opacity:0.7;text-align:center;line-height:1.3;}
+
+/* ── Session blocks ── */
+.blk{
+  position:absolute;border-radius:6px;overflow:hidden;cursor:pointer;
+  transition:transform .12s,box-shadow .12s,opacity .15s;
+  -webkit-tap-highlight-color:transparent;z-index:2;
+  left:0;right:0;
+}
+.blk:hover{transform:translateY(-1px);z-index:8;box-shadow:0 2px 8px rgba(0,0,0,0.10);}
+.blk:active{transform:scale(.985);}
+.blk.on{z-index:9;}
+.blk.locked{opacity:.2;cursor:not-allowed;pointer-events:none;}
+/* Staggered layout: slot-0 left 55%, slot-1 right 55% — offset by 45% */
+.blk.s0{left:0;right:44%;z-index:3;}
+.blk.s1{left:44%;right:0;z-index:4;}
+.blk.s0:hover,.blk.s1:hover{z-index:8;}
+.blk.on.s0,.blk.on.s1{z-index:9;}
+
+.blk-f{background:var(--fl);border-left:2.5px solid var(--f);}
+.blk-f.on{outline:2px solid var(--f);}
+
+.blk-b{background:var(--bl);border-left:2.5px solid var(--b);}
+.blk-b.on{outline:2px solid var(--b);}
+
+.blk-w{background:var(--wl);border-left:2.5px solid var(--w);}
+.blk-w.on{outline:2px solid var(--w);}
+
+.blk.dmc{opacity:.18;pointer-events:none;}
+.bi{padding:5px 7px;height:100%;position:relative;display:flex;flex-direction:column;}
+.bt{font-size:10px;font-weight:500;line-height:1.35;padding-right:14px;}
+.bs{font-size:9px;margin-top:2px;line-height:1.3;}
+.bt-f{color:var(--fd);}.bs-f{color:var(--fm);}.bt-b{color:var(--bd);}.bs-b{color:var(--bm);}.bt-w{color:var(--wd);}.bs-w{color:var(--wm);}
+.bpl{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
+.bstg{font-size:8px;font-weight:500;padding:1px 5px;border-radius:3px;line-height:1.5;}
+.bstg-f{background:rgba(0,0,0,0.06);color:var(--fm);}.bstg-b{background:rgba(0,0,0,0.06);color:var(--bm);}.bstg-w{background:rgba(0,0,0,0.06);color:var(--wm);}
+.jpill{font-size:8px;font-weight:500;padding:1px 4px;border-radius:3px;background:var(--sf2);color:var(--tx3);line-height:1.5;}
+.ckb{position:absolute;top:5px;right:5px;width:14px;height:14px;border-radius:50%;display:none;align-items:center;justify-content:center;}
+.blk.on .ckb{display:flex;}
+.blk-f.on .ckb{background:var(--f);}.blk-b.on .ckb{background:var(--b);}.blk-w.on .ckb{background:var(--w);}
+
+/* ── Special full-width bars ──
+   Thin label strip: only the label height is interactive.
+   A separate full-height ghost sits behind with pointer-events:none
+   so clicks pass through to session cards underneath.
+*/
+.sp-ghost{
+  position:absolute;left:0;right:0;
+  pointer-events:none;z-index:1;
+  border-radius:6px;
+  background:rgba(241,239,232,0.22);
+  border-top:0.5px solid var(--spbd);
+  border-bottom:0.5px solid var(--spbd);
+}
+@media(prefers-color-scheme:dark){
+  .sp-ghost{background:rgba(255,255,255,0.04);}
+}
+/* The interactive label bar — positioned at top of the time band */
+.sp-bar{
+  position:absolute;left:0;right:0;height:24px;
+  border-radius:6px 6px 0 0;
+  cursor:pointer;z-index:12;
+  display:flex;align-items:center;padding:0 10px;gap:7px;
+  background:rgba(241,239,232,0.88);
+  border:0.5px solid var(--spbd);
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  transition:background .15s,transform .08s;
+  -webkit-tap-highlight-color:transparent;user-select:none;
+}
+@media(prefers-color-scheme:dark){
+  .sp-bar{background:rgba(34,34,32,0.88);}
+}
+.sp-bar:hover{background:rgba(241,239,232,0.98);}
+@media(prefers-color-scheme:dark){.sp-bar:hover{background:rgba(44,44,42,0.98);}}
+.sp-bar:active{transform:scale(.997);}
+.sp-bar.on{background:var(--sptx);border-color:var(--sptx);}
+.sp-bar.on .sp-nm{color:#fff;}
+.sp-bar.on .sp-sk{color:rgba(255,255,255,0.65);}
+.sp-ck{
+  width:13px;height:13px;border-radius:50%;
+  border:1px solid var(--spbd);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .12s;
+}
+.sp-bar.on .sp-ck{border-color:rgba(255,255,255,0.5);}
+.sp-nm{font-size:10px;font-weight:500;color:var(--sptx);line-height:1;}
+.sp-sk{font-size:9px;color:var(--tx3);margin-left:1px;}
+.sp-jp{font-size:8px;font-weight:500;padding:1px 4px;border-radius:3px;background:rgba(0,0,0,0.08);color:var(--sptx);line-height:1.5;flex-shrink:0;}
+
+/* ── Summary ── */
+.sumpanel{margin:1.5rem 1.25rem 0;border:0.5px solid var(--bd);border-radius:10px;overflow:hidden;}
+.sumhd{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--sf);border-bottom:0.5px solid var(--bd);}
+.sumhdl{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:500;color:var(--tx2);}
+.sumcnt{font-weight:400;color:var(--tx3);}
+.clrbtn{font-size:11px;color:var(--tx3);cursor:pointer;padding:3px 8px;border-radius:5px;border:0.5px solid var(--bd);background:transparent;transition:all .12s;}
+.clrbtn:hover{background:var(--sf2);color:var(--tx2);}
+.sumbody{padding:0 14px;}
+.summt{font-size:12px;color:var(--tx3);padding:14px 0;}
+.srow{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:0.5px solid var(--bd);font-size:12px;}
+.srow:last-child{border-bottom:none;}
+.stag{font-size:9px;font-weight:500;padding:2px 7px;border-radius:4px;flex-shrink:0;line-height:1.5;}
+.stag-f{background:var(--fl);color:var(--fd);}.stag-b{background:var(--bl);color:var(--bd);}.stag-w{background:var(--wl);color:var(--wd);}
+.stag-s{background:var(--sf2);color:var(--sptx);}
+.stm{color:var(--tx3);flex-shrink:0;font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.svn{font-size:9px;padding:1px 5px;border-radius:3px;background:var(--sf2);color:var(--tx3);flex-shrink:0;}
+.sttlw{min-width:0;flex:1;}
+.sttl{color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;}
+.sja{font-size:9px;color:var(--tx3);flex-shrink:0;}
+.srm{font-size:12px;color:var(--tx3);cursor:pointer;padding:2px 6px;border-radius:4px;border:none;background:transparent;flex-shrink:0;line-height:1;transition:all .12s;}
+.srm:hover{background:var(--sf2);color:var(--tx);}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="ev-header">
+    <div class="ev-eyebrow">Anthropic · Developer Conference</div>
+    <div class="ev-title">Code with Claude: Extended Tokyo</div>
+    <div class="ev-meta"><span>June 11, 2026</span><span class="ev-dot"></span><span>Tokyo, Japan</span><span class="ev-dot"></span><span>08:30 – 18:00 JST</span></div>
+  </header>
+  <div class="ctrl">
+    <div class="lgnd">
+      <div class="chip" id="chip-f" onclick="flt('f')">
+        <div class="ldot" style="background:var(--f)"></div>Founder stage
+      </div>
+      <div class="chip" id="chip-b" onclick="flt('b')">
+        <div class="ldot" style="background:var(--b)"></div>Builder stage
+      </div>
+      <div class="chip" id="chip-w" onclick="flt('w')">
+        <div class="ldot" style="background:var(--w)"></div>Workshop
+      </div></div>
+    <div class="hint"><i class="ti ti-circle-check" style="font-size:13px;" aria-hidden="true"></i>タップで参加チェック</div>
+  </div>
+  <div class="tl-outer">
+    <div class="axis" id="axis"></div>
+    <div class="canvas" id="canvas">
+      <div class="cols" id="cols">
+      <div class="col" id="cf">
+        <div class="col-hdr hdr-f">
+          <div class="hdr-n hn-f">Founder stage</div>
+          <div class="hdr-d hd-f">Founder stories</div>
+        </div>
+      </div>
+      <div class="col" id="cb">
+        <div class="col-hdr hdr-b">
+          <div class="hdr-n hn-b">Builder stage</div>
+          <div class="hdr-d hd-b">Builder deep-dives</div>
+        </div>
+      </div>
+      <div class="col" id="cw">
+        <div class="col-hdr hdr-w">
+          <div class="hdr-n hn-w">Workshop</div>
+          <div class="hdr-d hd-w">Hands-on</div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+  <div class="sumpanel">
+    <div class="sumhd">
+      <div class="sumhdl"><i class="ti ti-calendar-check" style="font-size:14px;" aria-hidden="true"></i>参加予定<span class="sumcnt" id="scnt"></span></div>
+      <button class="clrbtn" id="clrb" onclick="clearAll()" style="display:none">すべてクリア</button>
+    </div>
+    <div class="sumbody"><div id="suml"><div class="summt">セッションをタップして追加</div></div></div>
+  </div>
+</div>
+<script>
+const S0=510,E0=1080,PX=1.9,HDR=42;
+const tm=t=>{const[h,m]=t.split(':').map(Number);return h*60+m;};
+const yp=t=>HDR+(tm(t)-S0)*PX;
+const hp=(s,e)=>Math.max((tm(e)-tm(s))*PX-3,18);
+const CK='<svg width="9" height="7" viewBox="0 0 9 7" fill="none"><polyline points="1,3.5 3.5,6 8,1" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const TK=["f","b","w"];
+const TN={"f":"Founder stage","b":"Builder stage","w":"Workshop"};
+const D=[{"id":"bk","tr":"s","col":"all","s":"08:30","e":"09:30","ttl":"Check-in & Breakfast"},{"id":"kn","tr":"s","col":"all","s":"09:30","e":"09:45","ttl":"Opening keynote","spk":"Angela Jiang · Cat Wu · Katelyn Lesse"},{"id":"f1","tr":"f","col":"f","s":"10:00","e":"10:30","ttl":"Claude Code native company building: GenerativeX","spk":"Rei Araki","ja":1},{"id":"b1","tr":"b","col":"b","s":"10:00","e":"10:30","ttl":"What happens when domain experts can finally build","spk":"Jason Tangen"},{"id":"w1","tr":"w","col":"w","s":"10:00","e":"10:45","ttl":"How we Claude Code","spk":"Jason Schwartz"},{"id":"f2","tr":"f","col":"f","s":"10:45","e":"11:15","ttl":"Myrealtrip: prototype to production","spk":"Wonjin Hur"},{"id":"b2","tr":"b","col":"b","s":"10:45","e":"11:15","ttl":"Aini: zero-language barrier chat","spk":"Siyuan Yan (Matt)"},{"id":"w2","tr":"w","col":"w","s":"11:00","e":"11:45","ttl":"Ship your first Managed Agent","spk":"Koki Yoshida"},{"id":"f3","tr":"f","col":"f","s":"11:30","e":"12:00","ttl":"The 1% problem: 2-person team, #1 benchmark","spk":"Gahee Seo"},{"id":"b3","tr":"b","col":"b","s":"11:30","e":"12:00","ttl":"あなたの日常にClaudeを取り入れる","spk":"Yuta Hayashi","ja":1},{"id":"w3","tr":"w","col":"w","s":"12:00","e":"12:45","ttl":"Agents that remember","spk":"Sam Jiang"},{"id":"ln","tr":"s","col":"all","s":"11:45","e":"13:30","ttl":"Lunch"},{"id":"w4","tr":"w","col":"w","s":"13:00","e":"13:45","ttl":"Evals for taste: slide-generation agent","spk":"Jonah Dueck"},{"id":"f4","tr":"f","col":"f","s":"13:15","e":"13:45","ttl":"The model is ready. The spec isn't.","spk":"Tsuyuki / Hori"},{"id":"b4","tr":"b","col":"b","s":"13:15","e":"13:45","ttl":"Same model, three worlds: JP / IN / AU","spk":"Bigman / Smith / Doshi / Hayashi"},{"id":"f5","tr":"f","col":"f","s":"14:00","e":"14:30","ttl":"Code less, query more: sub-agents","spk":"Kenta Yamamoto"},{"id":"b5","tr":"b","col":"b","s":"14:00","e":"14:30","ttl":"Legal platform for 280M people","spk":"Ilham Firdausi Putra"},{"id":"w5","tr":"w","col":"w","s":"14:00","e":"14:45","ttl":"Tool, skill, or subagent?","spk":"Karan Sampath"},{"id":"b6","tr":"b","col":"b","s":"14:45","e":"15:15","ttl":"Blood, code & Claude: life-saving app","spk":"Sumeet Doshi"},{"id":"w6","tr":"w","col":"w","s":"15:00","e":"15:45","ttl":"Agent Battle: mine diamonds in 45 min","spk":"Liam Plambeck"},{"id":"b7","tr":"b","col":"b","s":"15:30","e":"16:00","ttl":"Manager 11: football game with Claude","spk":"Rye Smith"},{"id":"rc","tr":"s","col":"all","s":"15:45","e":"18:00","ttl":"Closing reception"}];
+const STAGGER={};
+
+function ov(a,b){return tm(a.s)<tm(b.e)&&tm(a.e)>tm(b.s);}
+const CM={};
+D.forEach(a=>{CM[a.id]=new Set();D.forEach(b=>{if(a.id!==b.id&&a.col!=='all'&&b.col!=='all'&&ov(a,b))CM[a.id].add(b.id);});});
+
+const SK='cwc_ext_tokyo_v4';
+const ck=new Set(JSON.parse(localStorage.getItem(SK)||'[]'));
+const hid=new Set();
+const CE=Object.fromEntries(TK.map(k=>[k,document.getElementById('c'+k)]));
+
+function build(){
+  const tot=(E0-S0)*PX+HDR+24;
+  Object.values(CE).forEach(c=>c.style.minHeight=tot+'px');
+  const ax=document.getElementById('axis');
+  ax.style.height=tot+'px';
+  const canvas=document.getElementById('canvas');
+  canvas.style.minHeight=tot+'px';
+
+  // ticks
+  for(let m=S0;m<=E0;m+=30){
+    const y=HDR+(m-S0)*PX,hr=m%60===0;
+    const el=document.createElement('div');
+    el.className='tick';el.style.top=y+'px';
+    const hh=Math.floor(m/60),mm=(m%60).toString().padStart(2,'0');
+    el.innerHTML=`<span class="tlb${hr?' hr':''}">${hh}:${mm}</span><span class="tln${hr?' hr':''}"></span>`;
+    ax.appendChild(el);
+  }
+
+  // special bars — on canvas, NOT on cols, so pointer-events work correctly
+  D.filter(d=>d.col==='all').forEach(d=>{
+    const y=yp(d.s), h=hp(d.s,d.e);
+    // ghost: full-height translucent band, no pointer-events
+    const ghost=document.createElement('div');
+    ghost.className='sp-ghost';
+    ghost.style.cssText=`top:${y}px;height:${h}px;`;
+    canvas.appendChild(ghost);
+    // label bar: only 24px tall at top of band, fully clickable
+    const bar=document.createElement('div');
+    bar.id='bar-'+d.id;
+    bar.className='sp-bar'+(ck.has(d.id)?' on':'');
+    bar.style.top=`${y}px`;
+    const jp=d.ja?`<span class="sp-jp">JP</span>`:'';
+    bar.innerHTML=`<div class="sp-ck">${CK}</div><span class="sp-nm">${d.ttl}</span>${d.spk?`<span class="sp-sk">· ${d.spk}</span>`:''}${jp}`;
+    bar.addEventListener('click',()=>togSp(d));
+    canvas.appendChild(bar);
+  });
+
+  // normal sessions
+  D.filter(d=>d.col!=='all').forEach(d=>{
+    const col=CE[d.col];
+    const el=document.createElement('div');
+    el.id='blk-'+d.id;
+    const sg=STAGGER[d.id];
+    let cls=`blk blk-${d.tr}${ck.has(d.id)?' on':''}`;
+    if(sg) cls+=` s${sg.slot}`;
+    el.className=cls;
+    el.style.top=yp(d.s)+'px';
+    el.style.height=hp(d.s,d.e)+'px';
+    const sp=d.stage?`<span class="bstg bstg-${d.tr}">${d.stage}</span>`:'';
+    const jp=d.ja?`<span class="jpill">JP</span>`:'';
+    el.innerHTML=`<div class="bi"><div class="bt bt-${d.tr}">${d.ttl}</div>${d.spk?`<div class="bs bs-${d.tr}">${d.spk}</div>`:''}<div class="bpl">${sp}${jp}</div><div class="ckb">${CK}</div></div>`;
+    el.addEventListener('click',()=>tog(d));
+    col.appendChild(el);
+  });
+
+  upLock();render();
+}
+
+function togSp(d){
+  const bar=document.getElementById('bar-'+d.id);
+  if(ck.has(d.id)){ck.delete(d.id);bar.classList.remove('on');}
+  else{ck.add(d.id);bar.classList.add('on');}
+  save();render();
+}
+
+function tog(d){
+  const el=document.getElementById('blk-'+d.id);
+  if(ck.has(d.id)){ck.delete(d.id);el.classList.remove('on');}
+  else{
+    (CM[d.id]||new Set()).forEach(cid=>{
+      if(ck.has(cid)){ck.delete(cid);const c=document.getElementById('blk-'+cid);if(c)c.classList.remove('on');}
+    });
+    ck.add(d.id);el.classList.add('on');
+  }
+  save();upLock();render();
+}
+
+function upLock(){
+  D.filter(d=>d.col!=='all').forEach(d=>{
+    const el=document.getElementById('blk-'+d.id);if(!el)return;
+    if(ck.has(d.id)){el.classList.remove('locked');return;}
+    el.classList.toggle('locked',[...(CM[d.id]||[])].some(c=>ck.has(c)));
+  });
+}
+
+function clearAll(){
+  ck.clear();
+  document.querySelectorAll('.blk.on,.sp-bar.on').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.blk.locked').forEach(e=>e.classList.remove('locked'));
+  localStorage.removeItem(SK);render();
+}
+function save(){localStorage.setItem(SK,JSON.stringify([...ck]));}
+function flt(tr){
+  const chip=document.getElementById('chip-'+tr);
+  if(hid.has(tr)){hid.delete(tr);chip.classList.remove('dim');}
+  else{hid.add(tr);chip.classList.add('dim');}
+  document.querySelectorAll('.blk-'+tr).forEach(e=>e.classList.toggle('dmc',hid.has(tr)));
+}
+
+function render(){
+  const sl=document.getElementById('suml');
+  const cnt=document.getElementById('scnt');
+  const cb=document.getElementById('clrb');
+  if(!ck.size){sl.innerHTML='<div class="summt">セッションをタップして追加</div>';cnt.textContent='';cb.style.display='none';return;}
+  cb.style.display='';
+  const items=D.filter(d=>ck.has(d.id)).sort((a,b)=>tm(a.s)-tm(b.s));
+  cnt.textContent=` ${items.length}件`;
+  sl.innerHTML=items.map(d=>`
+    <div class="srow">
+      <span class="stag stag-${d.tr}">${TN[d.tr]||'Event'}</span>
+      <span class="stm">${d.s}–${d.e}</span>
+      ${d.stage?`<span class="svn">${d.stage}</span>`:''}
+      <span class="sttlw"><span class="sttl">${d.ttl}</span></span>
+      ${d.ja?`<span class="sja">JP</span>`:''}
+      <button class="srm" onclick="rmv('${d.id}')" aria-label="削除">✕</button>
+    </div>`).join('');
+}
+function rmv(id){const d=D.find(s=>s.id===id);if(!d)return;d.col==='all'?togSp(d):tog(d);}
+build();
+</script>
+</body>
+</html>
