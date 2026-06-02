@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <rect width="1200" height="1200" fill="#F7F6F3"/>
+  <rect x="96" y="96" width="1008" height="1008" rx="44" fill="#FFFFFF" stroke="#D9D6CC" stroke-width="2"/>
+
+  <text x="152" y="184" fill="#9A9890" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="30" font-weight="760" letter-spacing="3">UNOFFICIAL LOCAL-FIRST PLANNER</text>
+  <text x="152" y="290" fill="#181816" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="78" font-weight="800">Code with Claude</text>
+  <text x="152" y="378" fill="#181816" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="78" font-weight="800">Tokyo 2026</text>
+  <text x="152" y="456" fill="#5A5955" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="37" font-weight="560">Session planner for Tokyo / Extended Tokyo</text>
+
+  <g transform="translate(152 548)">
+    <rect width="214" height="66" rx="14" fill="#181816"/>
+    <text x="28" y="43" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="27" font-weight="760">Day 1 · 6/10</text>
+    <rect x="232" width="214" height="66" rx="14" fill="#EFEDE7" stroke="#D9D6CC" stroke-width="2"/>
+    <text x="260" y="43" fill="#5A5955" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="27" font-weight="760">Day 2 · 6/11</text>
+  </g>
+
+  <g transform="translate(152 704)">
+    <rect width="896" height="76" rx="18" fill="#E1F5EE" stroke="#1D9E75" stroke-width="4"/>
+    <circle cx="830" cy="38" r="18" fill="#1D9E75"/>
+    <path d="M822 38l6 6 14-18" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="30" y="48" fill="#085041" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="760">10:30 · What's new in Claude Code</text>
+
+    <rect y="104" width="896" height="76" rx="18" fill="#EEEDFE" stroke="#7F77DD" stroke-width="4"/>
+    <text x="30" y="152" fill="#3C3489" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="760">11:15 · Inside Canva AI</text>
+
+    <rect y="208" width="896" height="76" rx="18" fill="#FAECE7" stroke="#D85A30" stroke-width="4"/>
+    <text x="30" y="256" fill="#712B13" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="760">14:00 · Tool, skill, or subagent?</text>
+  </g>
+
+  <g transform="translate(152 1030)">
+    <circle cx="16" cy="16" r="11" fill="#1D9E75"/>
+    <text x="40" y="25" fill="#5A5955" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="660">Check sessions</text>
+    <circle cx="318" cy="16" r="11" fill="#7F77DD"/>
+    <text x="342" y="25" fill="#5A5955" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="660">Compare tracks</text>
+    <circle cx="638" cy="16" r="11" fill="#D85A30"/>
+    <text x="662" y="25" fill="#5A5955" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="28" font-weight="660">Saved in your browser</text>
+  </g>
+</svg>
