@@ -205,6 +205,27 @@ body{background:var(--bg);color:var(--tx);font-family:-apple-system,BlinkMacSyst
 .modal-ck:hover{background:var(--cl);}
 .modal-ck.on{background:var(--c);color:#fff;}
 .modal-ck .ti{font-size:17px;}
+/* --- now indicator (event day) --- */
+.nowline{position:absolute;left:0;right:0;height:0;border-top:2px solid var(--coral);z-index:30;pointer-events:none;}
+.nowline::before{content:"";position:absolute;left:-4px;top:-5px;width:9px;height:9px;border-radius:50%;background:var(--coral);box-shadow:0 0 0 3px color-mix(in srgb,var(--coral) 24%,transparent);}
+.nowtick{position:absolute;right:3px;transform:translateY(-50%);background:var(--coral);color:#fff;font-size:9px;font-weight:700;padding:2px 5px;border-radius:5px;line-height:1;font-variant-numeric:tabular-nums;z-index:6;box-shadow:0 1px 3px rgba(0,0,0,0.22);white-space:nowrap;letter-spacing:0.02em;}
+.blk.live{z-index:31;box-shadow:0 0 0 2px var(--coral),var(--shadow-lg);}
+.blk.past{opacity:.42;}
+.sp-band.past{opacity:.5;}
+.spnow{display:flex;align-items:center;gap:8px;margin:7px 1.05rem;}
+.spnow-d{width:7px;height:7px;border-radius:50%;background:var(--coral);flex-shrink:0;box-shadow:0 0 0 3px color-mix(in srgb,var(--coral) 22%,transparent);}
+.spnow-t{font-size:11px;font-weight:700;color:var(--coral-m);font-variant-numeric:tabular-nums;white-space:nowrap;letter-spacing:0.02em;}
+.spnow-l{flex:1;height:2px;border-radius:2px;background:var(--coral);opacity:.45;}
+.mcard.live{box-shadow:0 0 0 2px var(--coral);}
+.mcard.on.live{box-shadow:0 0 0 2px var(--coral),0 0 0 1.5px var(--c) inset;background:var(--cl);}
+.mcard.live .mcard-time::after{content:" · 進行中";color:var(--coral-m);font-weight:700;}
+.mcard.past{opacity:.5;}
+.mspecial.past{opacity:.55;}
+/* countdown chip (pre-event) in the meta row */
+.cdown{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--tx2);background:var(--sf);border:0.5px solid var(--bd2);padding:3px 9px 3px 8px;border-radius:20px;line-height:1;letter-spacing:0.01em;white-space:nowrap;}
+.cdown .ti{font-size:13px;color:var(--coral);}
+.cdown.hot{color:var(--coral-d);background:var(--coral-l);border-color:color-mix(in srgb,var(--coral) 30%,transparent);}
+.cdown.hot .ti{color:var(--coral-m);}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;}}
 @media(max-width:720px){
   .view-pc{display:none;}
@@ -341,6 +362,45 @@ const DAYS={
 };
 const tm=t=>{const[h,m]=t.split(':').map(Number);return h*60+m;};
 const ov=(a,b)=>tm(a.s)<tm(b.e)&&tm(a.e)>tm(b.s);
+const fmtMin=m=>`${Math.floor(m/60)}:${String(m%60).padStart(2,'0')}`;
+// Current time, honoring an optional ?now= override (ISO "2026-06-10T11:20" or "11:20") for preview/testing.
+function getNow(){
+  try{
+    const q=new URLSearchParams(location.search).get('now');
+    if(q){
+      const iso=q.match(/^(\d{4}-\d{2}-\d{2})T(\d{1,2}):(\d{2})$/);
+      if(iso)return{date:iso[1],min:(+iso[2])*60+(+iso[3])};
+      const hm=q.match(/^(\d{1,2}):(\d{2})$/);
+      if(hm)return{date:curDay?DAYS[curDay].dateStr:null,min:(+hm[1])*60+(+hm[2])};
+    }
+    const n=new Date(),p=x=>String(x).padStart(2,'0');
+    return{date:`${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`,min:n.getHours()*60+n.getMinutes()};
+  }catch(e){return null;}
+}
+// whole-day difference (target - from) between two 'YYYY-MM-DD' strings
+function daysBetween(from,to){
+  const a=from.split('-').map(Number),b=to.split('-').map(Number);
+  return Math.round((Date.UTC(b[0],b[1]-1,b[2])-Date.UTC(a[0],a[1]-1,a[2]))/86400000);
+}
+// FR-10.2: self-retiring countdown chip in the meta row (day-based, no seconds ticker)
+function renderCountdown(){
+  const meta=document.getElementById('evMeta');if(!meta)return;
+  let chip=document.getElementById('cdown');
+  const d=D(),nw=getNow();let label=null,hot=false;
+  if(d&&nw&&nw.date){
+    const diff=daysBetween(nw.date,d.dateStr);
+    if(diff>=2)label=`開催まであと ${diff}日`;
+    else if(diff===1)label='明日開催';
+    else if(diff===0){hot=true;
+      if(nw.min<d.S0)label='本日開催 · まもなく';
+      else if(nw.min<=d.E0)label='開催中';
+    }
+  }
+  if(!label){if(chip)chip.remove();return;}
+  if(!chip){chip=document.createElement('span');chip.id='cdown';meta.appendChild(chip);}
+  chip.className='cdown'+(hot?' hot':'');
+  chip.innerHTML=`<i class="ti ti-clock" aria-hidden="true"></i>${esc(label)}`;
+}
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 let curDay=null;
 const ckByDay={day1:loadCk("day1"),day2:loadCk("day2")};
@@ -360,7 +420,8 @@ function computeConflicts(){
 function pickInitialDay(){
   const h=location.hash.replace('#','');
   if(h==='day1'||h==='day2')return h;
-  try{const n=new Date();if(n.getFullYear()===2026&&n.getMonth()===5){if(n.getDate()===11)return'day2';if(n.getDate()===10)return'day1';}}catch(e){}
+  const nw=getNow();
+  if(nw&&nw.date){if(nw.date===DAYS.day2.dateStr)return'day2';if(nw.date===DAYS.day1.dateStr)return'day1';}
   return'day1';
 }
 function switchDay(d){
@@ -372,7 +433,7 @@ function switchDay(d){
   const t1=document.getElementById('tab-day1'),t2=document.getElementById('tab-day2');
   t1.classList.toggle('on',d==='day1');t1.setAttribute('aria-selected',d==='day1');
   t2.classList.toggle('on',d==='day2');t2.setAttribute('aria-selected',d==='day2');
-  buildLegend();buildPC();buildSP();refresh();closeModal();
+  buildLegend();buildPC();buildSP();refresh();updateNow();closeModal();
   window.scrollTo(0,0);
 }
 function buildLegend(){
@@ -435,13 +496,13 @@ function buildSP(){
   items.forEach(x=>{
     if(x.col==='all'){
       lastStart=null;
-      const row=document.createElement('div');row.className='mspecial';row.id='sp-'+x.id;row.setAttribute('role','button');
+      const row=document.createElement('div');row.className='mspecial';row.id='sp-'+x.id;row.dataset.min=tm(x.s);row.setAttribute('role','button');
       row.innerHTML=`<div class="msp-ck">${CK_SVG}</div><div><div class="msp-tm">${x.s} – ${x.e}</div><div class="msp-t">${esc(x.ttl)}</div></div>`;
       row.onclick=()=>toggleCheck(x.id);wrap.appendChild(row);return;
     }
     if(x.s!==lastStart){
       lastStart=x.s;
-      const sh=document.createElement('div');sh.className='slot';
+      const sh=document.createElement('div');sh.className='slot';sh.dataset.min=tm(x.s);
       sh.innerHTML=`<div class="slot-h"><span class="slot-t">${x.s}</span><span class="slot-l"></span></div>`;
       wrap.appendChild(sh);slot=sh;
     }
@@ -476,6 +537,38 @@ function buildSP(){
     card.querySelector('.mckb').onclick=(e)=>{e.stopPropagation();toggleCheck(x.id);};
     slot.appendChild(card);
   });
+}
+function updateNow(){
+  const d=D();if(!d)return;
+  renderCountdown(); // shows on all days (pre-event); now-line markers below are event-day only
+  // clear previous markers/state
+  document.querySelectorAll('.nowline,.nowtick,.spnow').forEach(e=>e.remove());
+  d.data.forEach(x=>{
+    ['pc-','sp-'].forEach(p=>{const el=document.getElementById(p+x.id);if(el)el.classList.remove('live','past');});
+  });
+  const nw=getNow();
+  if(!nw||nw.date!==d.dateStr)return; // only on the event day being viewed
+  const now=nw.min;
+  d.data.forEach(x=>{
+    const live=tm(x.s)<=now&&now<tm(x.e),past=tm(x.e)<=now;
+    ['pc-','sp-'].forEach(p=>{const el=document.getElementById(p+x.id);if(el){el.classList.toggle('live',live);el.classList.toggle('past',past);}});
+  });
+  // PC: now line + axis tick (only while within the day's window)
+  if(now>=d.S0&&now<=d.E0){
+    const y=46+(now-d.S0)*d.PX;
+    const canvas=document.getElementById('canvas');
+    if(canvas){const line=document.createElement('div');line.className='nowline';line.style.top=y+'px';canvas.appendChild(line);}
+    const axis=document.getElementById('axis');
+    if(axis){const tick=document.createElement('div');tick.className='nowtick';tick.style.top=y+'px';tick.textContent=fmtMin(now);axis.appendChild(tick);}
+  }
+  // SP: "現在 HH:MM" divider before the first upcoming slot/special
+  const wrap=document.getElementById('splist');
+  if(wrap){
+    const div=document.createElement('div');div.className='spnow';
+    div.innerHTML=`<span class="spnow-d"></span><span class="spnow-t">現在 ${fmtMin(now)}</span><span class="spnow-l"></span>`;
+    const next=[...wrap.children].find(el=>el.dataset&&el.dataset.min!==undefined&&+el.dataset.min>now);
+    if(next)wrap.insertBefore(div,next);else wrap.appendChild(div);
+  }
 }
 function toggleCheck(id){
   const set=ck();
@@ -549,6 +642,7 @@ function setStick(){const h=document.getElementById('stick');if(h)document.docum
 window.addEventListener('resize',setStick);
 switchDay(pickInitialDay());
 setStick();
+setInterval(updateNow,30000);
 window.addEventListener('hashchange',()=>{const h=location.hash.replace('#','');if((h==='day1'||h==='day2')&&h!==curDay)switchDay(h);});
 </script>
 </body>
