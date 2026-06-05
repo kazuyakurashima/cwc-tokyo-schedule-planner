@@ -7,10 +7,13 @@
 <meta name="description" content="モデルに「道具」を持たせる。tool use・MCP・skill・subagent。"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Cpath d='M16 3.5l2.6 8.1L26 7.5l-4.1 7.4 8.1 2.6-8.1 2.6 4.1 7.4-7.4-4.1L16 31l-2.6-7.6-7.4 4.1 4.1-7.4L2 17.5l8.1-2.6L6 7.5l7.4 4.1L16 3.5z' fill='%23D85A30'/%3E%3Ccircle cx='16' cy='17.5' r='4.3' fill='%23F4A180'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="/prep/prep.css">
+<script defer src="/prep/prep-data.js"></script>
+<script defer src="/prep/prep.js"></script>
 </head>
 <body>
 <nav class="nav">
     <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
+    <a class="navlink" href="/prep/my-words.html"><i class="ti ti-bookmarks" aria-hidden="true"></i>マイ単語</a>
     <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
     <span class="nav-sp"></span>
     <a class="navlink" href="/prep/topic-4.html" aria-label="前のトピック"><i class="ti ti-chevron-left" aria-hidden="true"></i>Topic 4</a>
@@ -26,109 +29,110 @@
   </section>
 
   <section class="sec">
-    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙</h2>
+    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙<span class="mini vcount" data-topic="5"><i class="ti ti-bookmark" aria-hidden="true"></i>覚えたい <span class="vcount-n">0</span> / 15</span></h2>
+    <p class="vocab-hint"><i class="ti ti-circle" aria-hidden="true"></i> を押して覚えたい単語を選ぶと、<a href="/prep/my-words.html">マイ単語</a> にまとまります（この端末のみ保存）。</p>
     <table class="vocab">
-    <thead><tr><th>#</th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
-    <tbody><tr>
-    <td class="no" data-label="#">1</td>
+    <thead><tr><th class="th-ck"><span class="sr-only">覚えたい</span></th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <tbody><tr data-wid="t5-scaffolding">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">scaffolding</span></td>
     <td data-label="一般的な意味">足場、骨組み</td>
     <td data-label="講演文脈での意味">昔は自分で組んだ周辺コード。今はモデル・Claude Code・Managed Agents 等に吸収されつつある</td>
     <td data-label="語源・由来">scaffold（建築の足場）。完成すれば外す一時的構造、という含み</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">2</td>
+<tr data-wid="t5-tool-use">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">tool use</span></td>
     <td data-label="一般的な意味">道具の使用</td>
     <td data-label="講演文脈での意味">モデルが外部機能を呼び出す力。今は自分でツールを選ぶ</td>
     <td data-label="語源・由来">—</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">3</td>
+<tr data-wid="t5-tool-routing">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">tool routing</span></td>
     <td data-label="一般的な意味">ツールの振り分け</td>
     <td data-label="講演文脈での意味">どのツールを渡すか人が事前に選ぶこと。今は基本形ではなく、過剰だと逆効果。ただし大規模ツール群では tool search 等の設計は残る</td>
     <td data-label="語源・由来">route（経路を決める）</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">4</td>
+<tr data-wid="t5-retry-loop">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">retry loop</span></td>
     <td data-label="一般的な意味">再試行の繰り返し</td>
     <td data-label="講演文脈での意味">失敗時にやり直す仕組み。今はエラーを文脈に戻せば、Claudeが再試行や別手段を選ぶことがある</td>
     <td data-label="語源・由来">—</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">5</td>
+<tr data-wid="t5-output-schema">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">output schema</span></td>
     <td data-label="一般的な意味">出力の構造定義</td>
     <td data-label="講演文脈での意味">ツールが返す値の形。これも渡すと賢く動く。※Claude APIのstrict tool useは主に入力スキーマを保証</td>
     <td data-label="語源・由来">schema（型）。ギリシャ語 skhēma「形」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">6</td>
+<tr data-wid="t5-hook">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">hook</span></td>
     <td data-label="一般的な意味">引っかけ、フック</td>
     <td data-label="講演文脈での意味">ツール呼び出しの前後に処理を差し込む仕掛け</td>
     <td data-label="語源・由来">釣り針の hook。処理を「引っかける」点</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">7</td>
+<tr data-wid="t5-context-management">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">context management</span></td>
     <td data-label="一般的な意味">文脈の管理</td>
     <td data-label="講演文脈での意味">長く動くための文脈の保ち方。今は数行の設定で済む</td>
     <td data-label="語源・由来">—</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">8</td>
+<tr data-wid="t5-mcp-model-context-protocol">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">MCP (Model Context Protocol)</span></td>
     <td data-label="一般的な意味">—</td>
     <td data-label="講演文脈での意味">外部サービスへつなぐ共通の接続規格</td>
     <td data-label="語源・由来">Protocol：ギリシャ語 prōtokollon → 取り決め</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">9</td>
+<tr data-wid="t5-mcp-server">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">MCP server</span></td>
     <td data-label="一般的な意味">MCPサーバー</td>
     <td data-label="講演文脈での意味">データ・ツール・ワークフローを MCP 経由で公開するサーバー</td>
     <td data-label="語源・由来">—</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">10</td>
+<tr data-wid="t5-skill">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">skill</span></td>
     <td data-label="一般的な意味">技能、スキル</td>
     <td data-label="講演文脈での意味">エージェントに持たせる再利用できる手順書</td>
     <td data-label="語源・由来">—</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">11</td>
+<tr data-wid="t5-subagent-multi-agent-orchestration">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">subagent / multi-agent orchestration</span></td>
     <td data-label="一般的な意味">下位エージェント／複数エージェントの統率</td>
     <td data-label="講演文脈での意味">親が別のエージェントを生み、分担・連携させること</td>
     <td data-label="語源・由来">orchestration：オーケストラの指揮 → 全体の統率</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">12</td>
+<tr data-wid="t5-credential-vault">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">credential vault</span></td>
     <td data-label="一般的な意味">認証情報の金庫</td>
     <td data-label="講演文脈での意味">トークンをClaudeに見せず安全に保管・注入する仕組み</td>
     <td data-label="語源・由来">vault：地下金庫。ラテン語 volvere「丸く囲う」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">13</td>
+<tr data-wid="t5-sandbox">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">sandbox</span></td>
     <td data-label="一般的な意味">砂場、隔離環境</td>
     <td data-label="講演文脈での意味">Claudeが安全にコードを動かす隔離環境（Managed Agents/code execution）。Claude Codeのローカル実行とは区別</td>
     <td data-label="語源・由来">子供の砂場 → 外に影響しない実験場の比喩</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">14</td>
+<tr data-wid="t5-code-execution">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">code execution</span></td>
     <td data-label="一般的な意味">コードの実行</td>
     <td data-label="講演文脈での意味">Claudeが自分の環境でコードを書いて動かすこと</td>
     <td data-label="語源・由来">—</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">15</td>
+<tr data-wid="t5-front-door-for-agents">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">front door (for agents)</span></td>
     <td data-label="一般的な意味">（エージェント用の）正面玄関</td>
     <td data-label="講演文脈での意味">あらゆるソフトがエージェント向けの入口を持つ将来像</td>
@@ -187,6 +191,7 @@
   </main>
 <footer class="foot">
     <div>非公式の個人制作による予習教材です。語彙・英文・出典は教材本文に基づきます。セッション名・時間・タイトルは<a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">公式ページ</a>を正とし、差異がある場合は公式を優先してください。</div>
+    <div class="note"><i class="ti ti-device-mobile" aria-hidden="true"></i><span>「覚えたい単語」のチェックは<strong>この端末のブラウザにのみ</strong>保存されます。別の端末・ブラウザには引き継がれず、ブラウザのデータ消去やプライベートブラウズでは保持されないことがあります。</span></div>
     <div class="note"><i class="ti ti-info-circle" aria-hidden="true"></i><span>This is an unofficial personal study aid for Code with Claude Tokyo. Talk titles and times are from the official event page.</span></div>
   </footer>
 </body>

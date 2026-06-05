@@ -7,10 +7,13 @@
 <meta name="description" content="経験を次回に持ち越すエージェント。memory・dreaming・context engineering。"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Cpath d='M16 3.5l2.6 8.1L26 7.5l-4.1 7.4 8.1 2.6-8.1 2.6 4.1 7.4-7.4-4.1L16 31l-2.6-7.6-7.4 4.1 4.1-7.4L2 17.5l8.1-2.6L6 7.5l7.4 4.1L16 3.5z' fill='%23D85A30'/%3E%3Ccircle cx='16' cy='17.5' r='4.3' fill='%23F4A180'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="/prep/prep.css">
+<script defer src="/prep/prep-data.js"></script>
+<script defer src="/prep/prep.js"></script>
 </head>
 <body>
 <nav class="nav">
     <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
+    <a class="navlink" href="/prep/my-words.html"><i class="ti ti-bookmarks" aria-hidden="true"></i>マイ単語</a>
     <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
     <span class="nav-sp"></span>
     <a class="navlink" href="/prep/topic-3.html" aria-label="前のトピック"><i class="ti ti-chevron-left" aria-hidden="true"></i>Topic 3</a>
@@ -26,102 +29,103 @@
   </section>
 
   <section class="sec">
-    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙</h2>
+    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙<span class="mini vcount" data-topic="4"><i class="ti ti-bookmark" aria-hidden="true"></i>覚えたい <span class="vcount-n">0</span> / 14</span></h2>
+    <p class="vocab-hint"><i class="ti ti-circle" aria-hidden="true"></i> を押して覚えたい単語を選ぶと、<a href="/prep/my-words.html">マイ単語</a> にまとまります（この端末のみ保存）。</p>
     <table class="vocab">
-    <thead><tr><th>#</th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
-    <tbody><tr>
-    <td class="no" data-label="#">1</td>
+    <thead><tr><th class="th-ck"><span class="sr-only">覚えたい</span></th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <tbody><tr data-wid="t4-memory">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">memory</span></td>
     <td data-label="一般的な意味">記憶、思い出</td>
     <td data-label="講演文脈での意味">セッションを越えて残る情報。エージェントが読み書きするファイル群</td>
     <td data-label="語源・由来">ラテン語 memoria(記憶）から</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">2</td>
+<tr data-wid="t4-dreaming">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">dreaming</span></td>
     <td data-label="一般的な意味">夢を見ること</td>
     <td data-label="講演文脈での意味">過去セッションを見直し、パターンと失敗を抽出して記憶を整理・改善する裏側の処理</td>
     <td data-label="語源・由来">睡眠中の記憶整理になぞらえた命名</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">3</td>
+<tr data-wid="t4-context-engineering">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">context engineering</span></td>
     <td data-label="一般的な意味">文脈の設計</td>
     <td data-label="講演文脈での意味">モデルに渡す情報を取捨選択し、有限の文脈枠を最適に使う技術</td>
     <td data-label="語源・由来">context(共に織る）+ engineering</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">4</td>
+<tr data-wid="t4-self-learning-agent">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">self-learning agent</span></td>
     <td data-label="一般的な意味">—</td>
     <td data-label="講演文脈での意味">自分の経験から改善していくエージェント（モデルの重みを再学習する意味ではない）</td>
     <td data-label="語源・由来">self(自身）+ learning</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">5</td>
+<tr data-wid="t4-memory-store">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">memory store</span></td>
     <td data-label="一般的な意味">—</td>
     <td data-label="講演文脈での意味">記憶の保存場所。セッションに attach して使い、1セッションに最大8つまで付けられる</td>
     <td data-label="語源・由来">store は「貯蔵庫」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">6</td>
+<tr data-wid="t4-finite-context">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">finite context</span></td>
     <td data-label="一般的な意味">有限の文脈</td>
     <td data-label="講演文脈での意味">context window には上限があるという制約</td>
     <td data-label="語源・由来">finite(限りある）はラテン語 finis(終わり）から</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">7</td>
+<tr data-wid="t4-pattern">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">pattern</span></td>
     <td data-label="一般的な意味">模様、型</td>
     <td data-label="講演文脈での意味">複数のエージェントに共通して現れる傾向や失敗の型</td>
     <td data-label="語源・由来">古フランス語 patron(手本）から</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">8</td>
+<tr data-wid="t4-curation">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">curation</span></td>
     <td data-label="一般的な意味">選別、管理</td>
     <td data-label="講演文脈での意味">記憶から重複や古い情報を取り除き整える作業</td>
     <td data-label="語源・由来">ラテン語 curare(世話する）から</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">9</td>
+<tr data-wid="t4-permission-scope-access-scope">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">permission scope / access scope</span></td>
     <td data-label="一般的な意味">—</td>
     <td data-label="講演文脈での意味">あるエージェントが記憶ストアを読み書きできる範囲。公式Docsでは read_write / read_only で指定する</td>
     <td data-label="語源・由来">scope は「範囲、視野」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">10</td>
+<tr data-wid="t4-concurrency">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">concurrency</span></td>
     <td data-label="一般的な意味">同時並行</td>
     <td data-label="講演文脈での意味">多数のエージェントが同じ記憶に同時アクセスする状況</td>
     <td data-label="語源・由来">con(共に）+ currere(走る）</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">11</td>
+<tr data-wid="t4-out-of-band">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">out-of-band</span></td>
     <td data-label="一般的な意味">帯域外の、本流とは別の</td>
     <td data-label="講演文脈での意味">通常のエージェント作業とは別経路で走る非同期処理</td>
     <td data-label="語源・由来">通信用語で「通常経路の外」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">12</td>
+<tr data-wid="t4-version-history">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">version history</span></td>
     <td data-label="一般的な意味">変更履歴</td>
     <td data-label="講演文脈での意味">記憶の変更ごとに残る immutable なバージョン。監査・復元・redact に使える（保持期間に制約あり）</td>
     <td data-label="語源・由来">—</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">13</td>
+<tr data-wid="t4-knowledge-base">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">knowledge base</span></td>
     <td data-label="一般的な意味">知識ベース</td>
     <td data-label="講演文脈での意味">単なる作業メモを越え、整理された知識ベースのように機能する蓄積</td>
     <td data-label="語源・由来">—</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">14</td>
+<tr data-wid="t4-high-signal">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">high-signal</span></td>
     <td data-label="一般的な意味">情報価値が高い</td>
     <td data-label="講演文脈での意味">ノイズが少なく、覚える価値が高い情報</td>
@@ -183,6 +187,7 @@
   </main>
 <footer class="foot">
     <div>非公式の個人制作による予習教材です。語彙・英文・出典は教材本文に基づきます。セッション名・時間・タイトルは<a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">公式ページ</a>を正とし、差異がある場合は公式を優先してください。</div>
+    <div class="note"><i class="ti ti-device-mobile" aria-hidden="true"></i><span>「覚えたい単語」のチェックは<strong>この端末のブラウザにのみ</strong>保存されます。別の端末・ブラウザには引き継がれず、ブラウザのデータ消去やプライベートブラウズでは保持されないことがあります。</span></div>
     <div class="note"><i class="ti ti-info-circle" aria-hidden="true"></i><span>This is an unofficial personal study aid for Code with Claude Tokyo. Talk titles and times are from the official event page.</span></div>
   </footer>
 </body>

@@ -7,10 +7,13 @@
 <meta name="description" content="評価は出荷前の門番＋毎日直す改善エンジン。offline/online・trace clustering。"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Cpath d='M16 3.5l2.6 8.1L26 7.5l-4.1 7.4 8.1 2.6-8.1 2.6 4.1 7.4-7.4-4.1L16 31l-2.6-7.6-7.4 4.1 4.1-7.4L2 17.5l8.1-2.6L6 7.5l7.4 4.1L16 3.5z' fill='%23D85A30'/%3E%3Ccircle cx='16' cy='17.5' r='4.3' fill='%23F4A180'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="/prep/prep.css">
+<script defer src="/prep/prep-data.js"></script>
+<script defer src="/prep/prep.js"></script>
 </head>
 <body>
 <nav class="nav">
     <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
+    <a class="navlink" href="/prep/my-words.html"><i class="ti ti-bookmarks" aria-hidden="true"></i>マイ単語</a>
     <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
     <span class="nav-sp"></span>
     <a class="navlink" href="/prep/topic-5.html" aria-label="前のトピック"><i class="ti ti-chevron-left" aria-hidden="true"></i>Topic 5</a>
@@ -26,81 +29,82 @@
   </section>
 
   <section class="sec">
-    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙</h2>
+    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙<span class="mini vcount" data-topic="6"><i class="ti ti-bookmark" aria-hidden="true"></i>覚えたい <span class="vcount-n">0</span> / 11</span></h2>
+    <p class="vocab-hint"><i class="ti ti-circle" aria-hidden="true"></i> を押して覚えたい単語を選ぶと、<a href="/prep/my-words.html">マイ単語</a> にまとまります（この端末のみ保存）。</p>
     <table class="vocab">
-    <thead><tr><th>#</th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
-    <tbody><tr>
-    <td class="no" data-label="#">1</td>
+    <thead><tr><th class="th-ck"><span class="sr-only">覚えたい</span></th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <tbody><tr data-wid="t6-eval-evaluation">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">eval / evaluation</span></td>
     <td data-label="一般的な意味">評価、査定</td>
     <td data-label="講演文脈での意味">自分の用途に合わせて作る、出力品質を測る仕組み</td>
     <td data-label="語源・由来">ラテン語 valere(価値がある)</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">2</td>
+<tr data-wid="t6-benchmark">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">benchmark</span></td>
     <td data-label="一般的な意味">基準、指標</td>
     <td data-label="講演文脈での意味">モデル同士を比べる汎用テスト。eval(自分用)と区別</td>
     <td data-label="語源・由来">測量の基準点(bench mark)</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">3</td>
+<tr data-wid="t6-offline-eval">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">offline eval</span></td>
     <td data-label="一般的な意味">—</td>
     <td data-label="講演文脈での意味">出荷前の評価。自社用途の eval suite で出荷可否を判定</td>
     <td data-label="語源・由来">off-line=本番から切り離す</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">4</td>
+<tr data-wid="t6-online-eval">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">online eval</span></td>
     <td data-label="一般的な意味">—</td>
     <td data-label="講演文脈での意味">出荷後、trace・ABテスト・レビューで直す改善ループ</td>
     <td data-label="語源・由来">on-line=本番稼働中</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">5</td>
+<tr data-wid="t6-trace">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">trace</span></td>
     <td data-label="一般的な意味">足跡、記録</td>
     <td data-label="講演文脈での意味">エージェント1回の実行の全記録</td>
     <td data-label="語源・由来">trace=たどった跡</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">6</td>
+<tr data-wid="t6-trace-clustering">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">trace clustering</span></td>
     <td data-label="一般的な意味">—</td>
     <td data-label="講演文脈での意味">似た trace をまとめ、失敗の塊を見つける</td>
     <td data-label="語源・由来">cluster=群れ</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">7</td>
+<tr data-wid="t6-ab-testing">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">AB testing</span></td>
     <td data-label="一般的な意味">—</td>
     <td data-label="講演文脈での意味">2案を出し分けて優劣を測る検証</td>
     <td data-label="語源・由来">A案/B案の対比</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">8</td>
+<tr data-wid="t6-regression">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">regression</span></td>
     <td data-label="一般的な意味">後退、退行</td>
     <td data-label="講演文脈での意味">変更で前より悪くなること</td>
     <td data-label="語源・由来">regress=後ろへ戻る</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">9</td>
+<tr data-wid="t6-failure-mode">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">failure mode</span></td>
     <td data-label="一般的な意味">失敗の型</td>
     <td data-label="講演文脈での意味">どう失敗するかのパターン。1つずつ潰す</td>
     <td data-label="語源・由来">工学の故障様式から</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">10</td>
+<tr data-wid="t6-green-field">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">green field</span></td>
     <td data-label="一般的な意味">更地</td>
     <td data-label="講演文脈での意味">テストも枠組みも無い白紙状態。評価が難しい</td>
     <td data-label="語源・由来">何も建っていない野原</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">11</td>
+<tr data-wid="t6-production-quality">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">production quality</span></td>
     <td data-label="一般的な意味">本番品質</td>
     <td data-label="講演文脈での意味">デモでなく実サービスで使える水準</td>
@@ -161,6 +165,7 @@
   </main>
 <footer class="foot">
     <div>非公式の個人制作による予習教材です。語彙・英文・出典は教材本文に基づきます。セッション名・時間・タイトルは<a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">公式ページ</a>を正とし、差異がある場合は公式を優先してください。</div>
+    <div class="note"><i class="ti ti-device-mobile" aria-hidden="true"></i><span>「覚えたい単語」のチェックは<strong>この端末のブラウザにのみ</strong>保存されます。別の端末・ブラウザには引き継がれず、ブラウザのデータ消去やプライベートブラウズでは保持されないことがあります。</span></div>
     <div class="note"><i class="ti ti-info-circle" aria-hidden="true"></i><span>This is an unofficial personal study aid for Code with Claude Tokyo. Talk titles and times are from the official event page.</span></div>
   </footer>
 </body>
