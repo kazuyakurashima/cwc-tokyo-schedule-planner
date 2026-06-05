@@ -174,13 +174,19 @@ function parseTopic(n) {
     const { header, rows } = parseTable(lines.slice(vocabH.start + 1, vocabH.end));
     // 列特定: '#' があれば term=1.. 、無ければ先頭=term
     const hasNo = /^#$|番号/.test((header[0] || '').trim());
+    const seen = {};
     rows.forEach(r => {
       const no = hasNo ? r[0] : '';
       const term = hasNo ? r[1] : r[0];
       const general = hasNo ? r[2] : r[1];
       const talk = hasNo ? r[3] : r[2];
       const root = hasNo ? r[4] : r[3];
-      if (term) vocab.push({ no, term, general: general || '', talk: talk || '', root: root || '' });
+      if (!term) return;
+      // §8.2 方式B: term slug（行順変更に強い安定ID）。同一トピック内の衝突は -2,-3 を付す
+      let slug = term.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').replace(/-+/g, '-') || 'term';
+      seen[slug] = (seen[slug] || 0) + 1;
+      if (seen[slug] > 1) slug += '-' + seen[slug];
+      vocab.push({ id: `t${n}-${slug}`, no, term, general: general || '', talk: talk || '', root: root || '' });
     });
   }
 
@@ -215,6 +221,7 @@ function navBar(topicNo) {
   const next = topicNo < 8 ? topicNo + 1 : null;
   return `<nav class="nav">
     <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
+    <a class="navlink" href="/prep/my-words.html"><i class="ti ti-bookmarks" aria-hidden="true"></i>マイ単語</a>
     <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
     <span class="nav-sp"></span>
     ${prev ? `<a class="navlink" href="/prep/topic-${prev}.html" aria-label="前のトピック"><i class="ti ti-chevron-left" aria-hidden="true"></i>Topic ${prev}</a>` : ''}
@@ -248,15 +255,15 @@ function talksSection(meta) {
 }
 
 function vocabTable(vocab) {
-  const body = vocab.map(v => `<tr>
-    <td class="no" data-label="#">${esc(v.no)}</td>
+  const body = vocab.map(v => `<tr data-wid="${esc(v.id)}">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">${esc(v.term)}</span></td>
     <td data-label="一般的な意味">${esc(v.general)}</td>
     <td data-label="講演文脈での意味">${esc(v.talk)}</td>
     <td data-label="語源・由来">${esc(v.root)}</td>
   </tr>`).join('\n');
   return `<table class="vocab">
-    <thead><tr><th>#</th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <thead><tr><th class="th-ck"><span class="sr-only">覚えたい</span></th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
     <tbody>${body}</tbody>
   </table>`;
 }
@@ -271,6 +278,7 @@ function sourcesList(sources) {
 function footer() {
   return `<footer class="foot">
     <div>非公式の個人制作による予習教材です。語彙・英文・出典は教材本文に基づきます。セッション名・時間・タイトルは<a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">公式ページ</a>を正とし、差異がある場合は公式を優先してください。</div>
+    <div class="note"><i class="ti ti-device-mobile" aria-hidden="true"></i><span>「覚えたい単語」のチェックは<strong>この端末のブラウザにのみ</strong>保存されます。別の端末・ブラウザには引き継がれず、ブラウザのデータ消去やプライベートブラウズでは保持されないことがあります。</span></div>
     <div class="note"><i class="ti ti-info-circle" aria-hidden="true"></i><span>This is an unofficial personal study aid for Code with Claude Tokyo. Talk titles and times are from the official event page.</span></div>
   </footer>`;
 }
@@ -285,6 +293,8 @@ function page({ title, desc, body, topicNo }) {
 <meta name="description" content="${esc(desc)}"><link rel="icon" href="${FAVICON}">
 <link rel="stylesheet" href="${ICONS}">
 <link rel="stylesheet" href="/prep/prep.css">
+<script defer src="/prep/prep-data.js"></script>
+<script defer src="/prep/prep.js"></script>
 </head>
 <body>
 ${navBar(topicNo)}
@@ -306,7 +316,8 @@ function renderTopic(t) {
   </section>
 
   <section class="sec">
-    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙</h2>
+    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙<span class="mini vcount" data-topic="${t.n}"><i class="ti ti-bookmark" aria-hidden="true"></i>覚えたい <span class="vcount-n">0</span> / ${t.vocab.length}</span></h2>
+    <p class="vocab-hint"><i class="ti ti-circle" aria-hidden="true"></i> を押して覚えたい単語を選ぶと、<a href="/prep/my-words.html">マイ単語</a> にまとまります（この端末のみ保存）。</p>
     ${vocabTable(t.vocab)}
   </section>
 
@@ -337,6 +348,7 @@ function renderHub(topics) {
       <span class="tcard-no">TOPIC ${t.n}</span>
       <span class="tcard-t">${esc(t.title)}</span>
       <span class="tcard-sum">${esc(t.meta.summary)}</span>
+      <span class="tcard-prog" data-topic="${t.n}"><i class="ti ti-bookmark" aria-hidden="true"></i>覚えたい <span class="p-n">0</span> / ${t.vocab.length} 語</span>
     </a>`).join('\n');
     return `<section class="tier ${tm.cls}">
       <div class="tier-lab">${esc(tm.lab)}<span class="pill">${esc(tm.pill)}</span></div>
@@ -360,9 +372,44 @@ function renderHub(topics) {
 <meta name="description" content="Code with Claude Tokyo 2026 (6/10) の英語講演にそなえる予習教材。トピック別の重要語彙と英文リーディング。"><link rel="icon" href="${FAVICON}">
 <link rel="stylesheet" href="${ICONS}">
 <link rel="stylesheet" href="/prep/prep.css">
+<script defer src="/prep/prep-data.js"></script>
+<script defer src="/prep/prep.js"></script>
 </head>
 <body>
 <nav class="nav">
+  <a class="navlink" href="/prep/my-words.html"><i class="ti ti-bookmarks" aria-hidden="true"></i>マイ単語</a>
+  <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
+  <span class="nav-sp"></span>
+</nav>
+${body}
+${footer()}
+</body>
+</html>`;
+}
+
+// ---- マイ単語ページ (R1b) ----
+function renderMyWords() {
+  const body = `<main class="wrap">
+    <div class="eyebrow">予習教材 · マイ単語</div>
+    <h1 class="page-t">マイ単語リスト</h1>
+    <p class="hub-lead">各教材で覚えたい単語に <i class="ti ti-circle-check" aria-hidden="true"></i> を付けると、ここに集まります（<span id="mw-count">0</span> 語）。この端末のブラウザにのみ保存されます。</p>
+    <div id="mywords" class="mywords"></div>
+  </main>`;
+  return `<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>マイ単語 — Code with Claude Tokyo 2026 予習</title>
+<meta name="description" content="予習教材でチェックした「覚えたい単語」のマイリスト。"><link rel="icon" href="${FAVICON}">
+<link rel="stylesheet" href="${ICONS}">
+<link rel="stylesheet" href="/prep/prep.css">
+<script defer src="/prep/prep-data.js"></script>
+<script defer src="/prep/prep.js"></script>
+</head>
+<body>
+<nav class="nav">
+  <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
   <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
   <span class="nav-sp"></span>
 </nav>
@@ -381,4 +428,12 @@ for (let n = 1; n <= 8; n++) {
   console.log(`topic-${n}.html  ← ${t.meta.source}  (語彙${t.vocab.length}語 / ソース${t.sources.length}件 / EN${t.en.length}字)`);
 }
 writeFileSync(join(DIR, 'index.html'), renderHub(topics));
-console.log('index.html (hub) generated. topics:', topics.length);
+
+// PREP_DATA（マイ単語・ハブ進捗の描画用・§8.2/§8.5）
+const data = {
+  topics: Object.fromEntries(topics.map(t => [t.n, { title: t.meta.title, tier: t.meta.tier }])),
+  vocab: topics.flatMap(t => t.vocab.map(v => ({ id: v.id, topic: t.n, term: v.term, general: v.general, talk: v.talk, root: v.root }))),
+};
+writeFileSync(join(DIR, 'prep-data.js'), 'window.PREP_DATA=' + JSON.stringify(data) + ';\n');
+writeFileSync(join(DIR, 'my-words.html'), renderMyWords());
+console.log(`index.html (hub) + my-words.html + prep-data.js (${data.vocab.length}語) generated. topics:`, topics.length);

@@ -7,10 +7,13 @@
 <meta name="description" content="プロンプトを「直す」技術と、ボトルネックが動いた組織。eval・verification・dogfooding。"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Cpath d='M16 3.5l2.6 8.1L26 7.5l-4.1 7.4 8.1 2.6-8.1 2.6 4.1 7.4-7.4-4.1L16 31l-2.6-7.6-7.4 4.1 4.1-7.4L2 17.5l8.1-2.6L6 7.5l7.4 4.1L16 3.5z' fill='%23D85A30'/%3E%3Ccircle cx='16' cy='17.5' r='4.3' fill='%23F4A180'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="/prep/prep.css">
+<script defer src="/prep/prep-data.js"></script>
+<script defer src="/prep/prep.js"></script>
 </head>
 <body>
 <nav class="nav">
     <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
+    <a class="navlink" href="/prep/my-words.html"><i class="ti ti-bookmarks" aria-hidden="true"></i>マイ単語</a>
     <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
     <span class="nav-sp"></span>
     <a class="navlink" href="/prep/topic-7.html" aria-label="前のトピック"><i class="ti ti-chevron-left" aria-hidden="true"></i>Topic 7</a>
@@ -26,109 +29,110 @@
   </section>
 
   <section class="sec">
-    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙</h2>
+    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙<span class="mini vcount" data-topic="8"><i class="ti ti-bookmark" aria-hidden="true"></i>覚えたい <span class="vcount-n">0</span> / 15</span></h2>
+    <p class="vocab-hint"><i class="ti ti-circle" aria-hidden="true"></i> を押して覚えたい単語を選ぶと、<a href="/prep/my-words.html">マイ単語</a> にまとまります（この端末のみ保存）。</p>
     <table class="vocab">
-    <thead><tr><th>#</th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
-    <tbody><tr>
-    <td class="no" data-label="#">1</td>
+    <thead><tr><th class="th-ck"><span class="sr-only">覚えたい</span></th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <tbody><tr data-wid="t8-eval-evaluation">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">eval (evaluation)</span></td>
     <td data-label="一般的な意味">「評価」</td>
     <td data-label="講演文脈での意味">変更が本当に改善につながったかを測る仕組み。改善の起点</td>
     <td data-label="語源・由来">evaluate「価値を見積もる」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">2</td>
+<tr data-wid="t8-failure-mode">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">failure mode</span></td>
     <td data-label="一般的な意味">句的表現：失敗の出方・型</td>
     <td data-label="講演文脈での意味">プロンプトが崩れる具体的な不具合パターン</td>
     <td data-label="語源・由来">工学の「故障モード」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">3</td>
+<tr data-wid="t8-hygiene-general-hygiene">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">hygiene (general hygiene)</span></td>
     <td data-label="一般的な意味">「衛生」</td>
     <td data-label="講演文脈での意味">プロンプト全体を整える基本のお掃除</td>
     <td data-label="語源・由来">ギリシャ語 hygies「健康な」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">4</td>
+<tr data-wid="t8-output-contract">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">output contract</span></td>
     <td data-label="一般的な意味">句的表現：出力の取り決め</td>
     <td data-label="講演文脈での意味">出力形式を約束として明示する設計</td>
     <td data-label="語源・由来">contract「契約」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">5</td>
+<tr data-wid="t8-overfit">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">overfit</span></td>
     <td data-label="一般的な意味">「過適合する」</td>
     <td data-label="講演文脈での意味">機械学習の厳密語ではなく比喩。古い強すぎる指示や一部ケースに過剰反応する様</td>
     <td data-label="語源・由来">統計の overfitting から転用</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">6</td>
+<tr data-wid="t8-capability">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">capability</span></td>
     <td data-label="一般的な意味">「能力」</td>
     <td data-label="講演文脈での意味">モデルやシステムが実際に遂行できる能力。外部実行能力は指示では増えない</td>
     <td data-label="語源・由来">capable「〜できる」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">7</td>
+<tr data-wid="t8-generate-evaluate-repair-loop">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">generate–evaluate–repair loop</span></td>
     <td data-label="一般的な意味">句的表現：生成→評価→修復の反復</td>
     <td data-label="講演文脈での意味">生成・評価・修復を独立プロンプトで回す方式。流れが決め打ちなら厳密には workflow、LLM自身が動的に決めるなら agent</td>
     <td data-label="語源・由来">Anthropic は workflow と agent を区別</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">8</td>
+<tr data-wid="t8-bottleneck">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">bottleneck</span></td>
     <td data-label="一般的な意味">「隘路、ボトルネック」</td>
     <td data-label="講演文脈での意味">全体の速度を律する制約。今は移動し続けている</td>
     <td data-label="語源・由来">瓶の首の細さから</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">9</td>
+<tr data-wid="t8-bandwidth">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">bandwidth</span></td>
     <td data-label="一般的な意味">「帯域幅、処理できる量」</td>
     <td data-label="講演文脈での意味">エンジニアが捌ける作業量。コードを書く速度だけが主制約ではなくなった</td>
     <td data-label="語源・由来">通信の「帯域」由来</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">10</td>
+<tr data-wid="t8-verification">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">verification</span></td>
     <td data-label="一般的な意味">「検証、確認」</td>
     <td data-label="講演文脈での意味">量が増えた今の新しい隘路。正しさの担保</td>
     <td data-label="語源・由来">verify「真と確かめる」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">11</td>
+<tr data-wid="t8-shift-left">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">shift left</span></td>
     <td data-label="一般的な意味">句的表現：工程の前倒し</td>
     <td data-label="講演文脈での意味">不具合を源流に近い段階で自動的に捕まえる発想</td>
     <td data-label="語源・由来">工程図の「左＝早い段階」</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">12</td>
+<tr data-wid="t8-dogfooding">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">dogfooding</span></td>
     <td data-label="一般的な意味">句的表現：自社製品を自分で使う</td>
     <td data-label="講演文脈での意味">製品感覚を養うために作り手が日常使いすること</td>
     <td data-label="語源・由来">&quot;eat your own dog food&quot;</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">13</td>
+<tr data-wid="t8-source-of-truth">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">source of truth</span></td>
     <td data-label="一般的な意味">句的表現：唯一の正しい参照元</td>
     <td data-label="講演文脈での意味">最も正しいと信じる単一の拠り所。ここではコード</td>
     <td data-label="語源・由来">DB用語 single source of truth</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">14</td>
+<tr data-wid="t8-forcing-function">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">forcing function</span></td>
     <td data-label="一般的な意味">句的表現：強制力のある仕掛け</td>
     <td data-label="講演文脈での意味">チームに望ましい行動を必ず起こさせる原則</td>
     <td data-label="語源・由来">設計・行動経済学の用語</td>
   </tr>
-<tr>
-    <td class="no" data-label="#">15</td>
+<tr data-wid="t8-growth-mindset">
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">growth mindset</span></td>
     <td data-label="一般的な意味">句的表現：成長思考</td>
     <td data-label="講演文脈での意味">型や前提を絶えず見直し更新し続ける姿勢</td>
@@ -184,6 +188,7 @@
   </main>
 <footer class="foot">
     <div>非公式の個人制作による予習教材です。語彙・英文・出典は教材本文に基づきます。セッション名・時間・タイトルは<a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">公式ページ</a>を正とし、差異がある場合は公式を優先してください。</div>
+    <div class="note"><i class="ti ti-device-mobile" aria-hidden="true"></i><span>「覚えたい単語」のチェックは<strong>この端末のブラウザにのみ</strong>保存されます。別の端末・ブラウザには引き継がれず、ブラウザのデータ消去やプライベートブラウズでは保持されないことがあります。</span></div>
     <div class="note"><i class="ti ti-info-circle" aria-hidden="true"></i><span>This is an unofficial personal study aid for Code with Claude Tokyo. Talk titles and times are from the official event page.</span></div>
   </footer>
 </body>

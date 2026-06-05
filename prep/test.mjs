@@ -49,6 +49,33 @@ for (let n = 1; n <= 8; n++) {
 const hub = readFileSync(join(DIR, 'index.html'), 'utf8');
 ok((hub.match(/class="tcard /g) || []).length === 8, 'ハブに8トピックカード');
 ok(/最重要/.test(hub) && /重要/.test(hub) && /追いたい/.test(hub), 'ハブに3分類');
+ok((hub.match(/tcard-prog/g) || []).length === 8, 'ハブに覚えた語の進捗表示8件');
+
+// ---- 3) R1b: 単語チェック & マイ単語 ----
+const PREP_DATA = JSON.parse(readFileSync(join(DIR, 'prep-data.js'), 'utf8').replace(/^window\.PREP_DATA=/, '').replace(/;\s*$/, ''));
+const ids = PREP_DATA.vocab.map(v => v.id);
+ok(new Set(ids).size === ids.length, 'prep-data: 語彙IDが一意（slug衝突なし）');
+ok(ids.every(id => /^t[1-8]-[a-z0-9-]+$/.test(id)), 'prep-data: 語彙IDが term slug 形式 (t{n}-slug)');
+ok(PREP_DATA.vocab.every(v => v.term && v.topic), 'prep-data: 各語に term/topic');
+
+for (let n = 1; n <= 8; n++) {
+  const html = readFileSync(join(DIR, `topic-${n}.html`), 'utf8');
+  const rows = (html.match(/<tr data-wid="/g) || []).length;
+  const btns = (html.match(/class="vck"/g) || []).length;
+  const cnt = PREP_DATA.vocab.filter(v => v.topic === n).length;
+  ok(rows === cnt && btns === cnt, `topic-${n}: チェック行=ボタン=語数 (${cnt})`);
+  ok(html.includes('この端末のブラウザにのみ'), `topic-${n}: localStorage前提の注記（NFR-P8）`);
+  ok(html.includes('/prep/my-words.html'), `topic-${n}: マイ単語への導線`);
+  ok(!html.includes('cwc_tokyo_2026_prep_words'), `topic-${n}: 保存キーはHTMLに直書きしない`);
+}
+
+const mw = readFileSync(join(DIR, 'my-words.html'), 'utf8');
+ok(mw.includes('id="mywords"'), 'my-words: #mywords コンテナ');
+ok(mw.includes('prep-data.js') && mw.includes('prep.js'), 'my-words: データ＋ロジック読込');
+
+const pj = readFileSync(join(DIR, 'prep.js'), 'utf8');
+ok(pj.includes('cwc_tokyo_2026_prep_words'), 'prep.js: 保存キー cwc_tokyo_2026_prep_words');
+ok(!/cwc_tokyo_2026_day1|cwc_tokyo_2026_day2/.test(pj), 'prep.js: 既存 day1/day2 キーに触れない');
 
 console.log(`\n${fail === 0 ? 'ALL PASS' : fail + ' FAILED'}`);
 process.exit(fail === 0 ? 0 : 1);
