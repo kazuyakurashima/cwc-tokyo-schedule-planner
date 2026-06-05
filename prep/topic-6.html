@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Topic 6 評価(Eval)とは何か — 「最後のチェック」ではなく「毎日良くするエンジン」 — CwC Tokyo 予習</title>
+<meta name="description" content="評価は出荷前の門番＋毎日直す改善エンジン。offline/online・trace clustering。"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Cpath d='M16 3.5l2.6 8.1L26 7.5l-4.1 7.4 8.1 2.6-8.1 2.6 4.1 7.4-7.4-4.1L16 31l-2.6-7.6-7.4 4.1 4.1-7.4L2 17.5l8.1-2.6L6 7.5l7.4 4.1L16 3.5z' fill='%23D85A30'/%3E%3Ccircle cx='16' cy='17.5' r='4.3' fill='%23F4A180'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="/prep/prep.css">
+</head>
+<body>
+<nav class="nav">
+    <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
+    <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
+    <span class="nav-sp"></span>
+    <a class="navlink" href="/prep/topic-5.html" aria-label="前のトピック"><i class="ti ti-chevron-left" aria-hidden="true"></i>Topic 5</a>
+    <a class="navlink" href="/prep/topic-7.html" aria-label="次のトピック">Topic 7<i class="ti ti-chevron-right" aria-hidden="true"></i></a>
+  </nav>
+<main class="wrap tier-high">
+  <div class="eyebrow">技術英語リーディング帳 · Topic 6<span class="badge">重要</span></div>
+  <h1 class="page-t">評価(Eval)とは何か — 「最後のチェック」ではなく「毎日良くするエンジン」</h1>
+
+  <section class="sec intro">
+    <h2 class="sec-h"><i class="ti ti-bulb" aria-hidden="true"></i>このトピックの概要<span class="mini"><i class="ti ti-clock" aria-hidden="true"></i>約1分</span></h2>
+    <p>AIシステムを変えたとき、いちばん危ういのは「なんとなく良くなった気がする」という感覚です。本当に改善したのか、別の場所を壊しただけなのかは、測らないと分かりません。ここで効くのが <strong>evaluation(評価。略して eval)</strong> です。eval には2つの顔があります。出荷前に走らせる <strong>offline eval(オフライン評価)</strong>——出してよいか止めるかを決める門番。そしてもう一つが、本番運用後の <strong>online eval(オンライン評価)</strong>——実ユーザーが残す <strong>trace(トレース=実行の記録)</strong> やABテスト、人間のレビューを手がかりに、毎日エージェントを直し続ける改善ループです。eval を「出荷直前の最後の合否判定」で終わらせず、改善のエンジンに変える——これが Topic 6 の核心です。</p>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙</h2>
+    <table class="vocab">
+    <thead><tr><th>#</th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <tbody><tr>
+    <td class="no" data-label="#">1</td>
+    <td class="term-cell" data-label="用語"><span class="term">eval / evaluation</span></td>
+    <td data-label="一般的な意味">評価、査定</td>
+    <td data-label="講演文脈での意味">自分の用途に合わせて作る、出力品質を測る仕組み</td>
+    <td data-label="語源・由来">ラテン語 valere(価値がある)</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">2</td>
+    <td class="term-cell" data-label="用語"><span class="term">benchmark</span></td>
+    <td data-label="一般的な意味">基準、指標</td>
+    <td data-label="講演文脈での意味">モデル同士を比べる汎用テスト。eval(自分用)と区別</td>
+    <td data-label="語源・由来">測量の基準点(bench mark)</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">3</td>
+    <td class="term-cell" data-label="用語"><span class="term">offline eval</span></td>
+    <td data-label="一般的な意味">—</td>
+    <td data-label="講演文脈での意味">出荷前の評価。自社用途の eval suite で出荷可否を判定</td>
+    <td data-label="語源・由来">off-line=本番から切り離す</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">4</td>
+    <td class="term-cell" data-label="用語"><span class="term">online eval</span></td>
+    <td data-label="一般的な意味">—</td>
+    <td data-label="講演文脈での意味">出荷後、trace・ABテスト・レビューで直す改善ループ</td>
+    <td data-label="語源・由来">on-line=本番稼働中</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">5</td>
+    <td class="term-cell" data-label="用語"><span class="term">trace</span></td>
+    <td data-label="一般的な意味">足跡、記録</td>
+    <td data-label="講演文脈での意味">エージェント1回の実行の全記録</td>
+    <td data-label="語源・由来">trace=たどった跡</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">6</td>
+    <td class="term-cell" data-label="用語"><span class="term">trace clustering</span></td>
+    <td data-label="一般的な意味">—</td>
+    <td data-label="講演文脈での意味">似た trace をまとめ、失敗の塊を見つける</td>
+    <td data-label="語源・由来">cluster=群れ</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">7</td>
+    <td class="term-cell" data-label="用語"><span class="term">AB testing</span></td>
+    <td data-label="一般的な意味">—</td>
+    <td data-label="講演文脈での意味">2案を出し分けて優劣を測る検証</td>
+    <td data-label="語源・由来">A案/B案の対比</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">8</td>
+    <td class="term-cell" data-label="用語"><span class="term">regression</span></td>
+    <td data-label="一般的な意味">後退、退行</td>
+    <td data-label="講演文脈での意味">変更で前より悪くなること</td>
+    <td data-label="語源・由来">regress=後ろへ戻る</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">9</td>
+    <td class="term-cell" data-label="用語"><span class="term">failure mode</span></td>
+    <td data-label="一般的な意味">失敗の型</td>
+    <td data-label="講演文脈での意味">どう失敗するかのパターン。1つずつ潰す</td>
+    <td data-label="語源・由来">工学の故障様式から</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">10</td>
+    <td class="term-cell" data-label="用語"><span class="term">green field</span></td>
+    <td data-label="一般的な意味">更地</td>
+    <td data-label="講演文脈での意味">テストも枠組みも無い白紙状態。評価が難しい</td>
+    <td data-label="語源・由来">何も建っていない野原</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">11</td>
+    <td class="term-cell" data-label="用語"><span class="term">production quality</span></td>
+    <td data-label="一般的な意味">本番品質</td>
+    <td data-label="講演文脈での意味">デモでなく実サービスで使える水準</td>
+    <td data-label="語源・由来">—</td>
+  </tr></tbody>
+  </table>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-book-2" aria-hidden="true"></i>英文リーディング</h2>
+    <p class="passage-lab">English Reading Passage</p>
+    <div class="passage en">When you change an AI system, the real question is whether it actually got better — and at scale, &quot;vibes&quot; are not enough. A good setup rests on two pillars. The first is <strong>offline eval</strong>: a custom eval suite run before shipping, which stops a release if there is a major <strong>regression</strong>. The second is <strong>online eval</strong>: every session in production leaves a <strong>trace</strong>, and millions of them show what users really do. Because one trace is hard to debug, the key move is <strong>trace clustering</strong> — grouping similar failures so a recurring <strong>failure mode</strong> stands out. Important or controversial fixes can then be checked with <strong>AB testing</strong> when needed, since results are rarely clean and human judgment still decides. This is hard because <strong>vibe coding</strong> starts from a <strong>green field</strong> with no tests, so grading cannot just run a fixed test set. The takeaway: do not treat evaluation as a last check before shipping; treat it as an engine that ships a better, <strong>production quality</strong> agent every day.</div>
+    <p class="passage-lab" style="margin-top:14px">日本語訳</p><div class="passage ja">AIシステムを変えたとき、本当の問いは「実際に良くなったのか」です——そして大規模になると「雰囲気」では足りません。良い仕組みは2本の柱に支えられます。1つ目は <strong>offline eval(オフライン評価)</strong>——出荷前に走らせる、自社用途に合わせた eval suite で、重大な <strong>regression(後退)</strong> があれば出荷を止めます。2つ目は <strong>online eval(オンライン評価)</strong>——本番の各セッションは <strong>trace(トレース)</strong> を残し、その何百万件もが「ユーザーが実際に何をしているか」を示します。1本の trace は単体ではデバッグが難しいため、鍵となるのが <strong>trace clustering(トレースのクラスタリング)</strong>——似た失敗をまとめ、繰り返す <strong>failure mode(失敗の型)</strong> を浮かび上がらせることです。影響が大きい修正や判断が割れる修正は、必要に応じて <strong>AB testing(ABテスト)</strong> で検証します。結果はきれいに白黒つくことが稀なので、最後は人間の判断が決めます。これが難しいのは、<strong>vibe coding(自然言語からアプリを作る開発)</strong> が <strong>green field(更地)</strong> から始まりテストが無いため、採点が固定のテストを走らせるだけでは済まないからです。要点は、評価を「出荷直前の最後のチェック」と捉えず、毎日より良い <strong>production quality(本番品質)</strong> のエージェントを出荷する「エンジン」と捉えることです。</div>
+    <p class="passage-lab" style="margin-top:16px">使用ソースとリンク</p>
+    <ul class="sources"><li>
+    <span class="src-n">Evaluating and improving Replit Agent at scale(講演書き起こし)</span><span class="src-k">イベント講演</span>
+    <br><a href="https://www.youtube.com/watch?v=snroDwX1-JU" target="_blank" rel="noopener">https://www.youtube.com/watch?v=snroDwX1-JU</a>
+  </li>
+<li>
+    <span class="src-n">The prompting playbook(講演書き起こし)</span><span class="src-k">イベント講演</span>
+    <br><a href="https://www.youtube.com/watch?v=G2B0YWuJUgI" target="_blank" rel="noopener">https://www.youtube.com/watch?v=G2B0YWuJUgI</a>
+  </li>
+<li>
+    <span class="src-n">Demystifying evals for AI agents</span><span class="src-k">Anthropic公式Engineering Blog</span>
+    <br><a href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener">https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents</a>
+  </li>
+<li>
+    <span class="src-n">Using the Evaluation Tool</span><span class="src-k">Anthropic公式Docs</span>
+    <br><a href="https://docs.claude.com/en/docs/test-and-evaluate/eval-tool" target="_blank" rel="noopener">https://docs.claude.com/en/docs/test-and-evaluate/eval-tool</a>
+  </li>
+<li>
+    <span class="src-n">Building effective agents</span><span class="src-k">Anthropic公式Blog</span>
+    <br><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">https://www.anthropic.com/engineering/building-effective-agents</a>
+  </li>
+<li>
+    <span class="src-n">Code w/ Claude セッション一覧(SF)</span><span class="src-k">イベント公式ページ</span>
+    <br><a href="https://claude.com/code-with-claude/session/sf-evaluating-and-improving-replit-agent-at-scale" target="_blank" rel="noopener">https://claude.com/code-with-claude/session/sf-evaluating-and-improving-replit-agent-at-scale</a>
+  </li></ul>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-microphone" aria-hidden="true"></i>この講演を聞くなら覚える単語</h2>
+    <p class="talks-intro">下記の講演を聞く予定なら、<strong>上の「重要語彙」</strong>を覚えておくと当日の聞き取りがぐっと楽になります。<br>並びは<strong>トピックとの関連性</strong>の順で、講演自体の優劣ではありません。</p>
+    <div class="talks-grp">
+      <div class="talks-grp-h g-near"><span class="dot"></span>このトピックに一番沿っている講演</div>
+      <div class="talk talk-rec"><div class="talk-when"><span class="tm">参考録画 (SF)</span></div><div class="talk-ttl">Evaluating and improving Replit Agent at scale</div></div>
+<div class="talk"><div class="talk-when"><span class="tm">6/10 17:30 – 18:15</span><span class="stg">Workshop</span></div><div class="talk-ttl">The prompting playbook</div></div>
+    </div>
+<div class="talks-grp">
+      <div class="talks-grp-h g-close"><span class="dot"></span>このトピックに内容が近い講演</div>
+      <div class="talk"><div class="talk-when"><span class="tm">6/10 15:20 – 15:50</span><span class="stg">Main stage</span></div><div class="talk-ttl">The capability curve</div></div>
+<div class="talk"><div class="talk-when"><span class="tm">6/10 12:30 – 13:15</span><span class="stg">Workshop</span></div><div class="talk-ttl">Stop babysitting your agents</div></div>
+<div class="talk talk-rec"><div class="talk-when"><span class="tm">参考録画</span></div><div class="talk-ttl">Caching, harnesses, and advisors: Building on Claude at GitHub scale</div></div>
+    </div>
+
+    <a class="talks-back" href="/#day1"><i class="ti ti-arrow-left" aria-hidden="true"></i>プランナーで参加予定を決める</a>
+  </section>
+  </main>
+<footer class="foot">
+    <div>非公式の個人制作による予習教材です。語彙・英文・出典は教材本文に基づきます。セッション名・時間・タイトルは<a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">公式ページ</a>を正とし、差異がある場合は公式を優先してください。</div>
+    <div class="note"><i class="ti ti-info-circle" aria-hidden="true"></i><span>This is an unofficial personal study aid for Code with Claude Tokyo. Talk titles and times are from the official event page.</span></div>
+  </footer>
+</body>
+</html>

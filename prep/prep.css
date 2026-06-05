@@ -1,0 +1,132 @@
+/* CwC Tokyo 2026 — 予習教材 共通スタイル (R1a)
+   デザイントークンはセッションプランナー(index.html)から移植し、視覚トーンを統一する。 */
+:root{
+  --bg:#ffffff;--sf:#f7f6f3;--sf2:#f0efe9;--sf3:#e9e7df;
+  --tx:#181816;--tx2:#5a5955;--tx3:#9a9890;
+  --bd:rgba(0,0,0,0.10);--bd2:rgba(0,0,0,0.18);
+  --teal:#1D9E75;--teal-l:#E1F5EE;--teal-d:#085041;--teal-m:#0F6E56;
+  --purple:#7F77DD;--purple-l:#EEEDFE;--purple-d:#3C3489;--purple-m:#534AB7;
+  --coral:#D85A30;--coral-l:#FAECE7;--coral-d:#712B13;--coral-m:#993C1D;
+  --r:10px;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 1px 2px rgba(0,0,0,0.04);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#161614;--sf:#202020;--sf2:#282826;--sf3:#323230;
+    --tx:#eeede6;--tx2:#b0aea6;--tx3:#6c6a62;
+    --bd:rgba(255,255,255,0.09);--bd2:rgba(255,255,255,0.18);
+    --shadow:0 1px 3px rgba(0,0,0,0.3);
+  }
+}
+*{box-sizing:border-box;}
+html{-webkit-text-size-adjust:100%;}
+body{
+  margin:0;background:var(--bg);color:var(--tx);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Kaku Gothic ProN","Hiragino Sans",Meiryo,system-ui,sans-serif;
+  line-height:1.7;-webkit-font-smoothing:antialiased;
+}
+a{color:var(--coral-m);}
+.tier-must{--c:var(--coral);--cl:var(--coral-l);--cd:var(--coral-d);--cm:var(--coral-m);}
+.tier-high{--c:var(--teal);--cl:var(--teal-l);--cd:var(--teal-d);--cm:var(--teal-m);}
+.tier-opt{--c:var(--purple);--cl:var(--purple-l);--cd:var(--purple-d);--cm:var(--purple-m);}
+
+/* ---- top nav ---- */
+.nav{
+  position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:10px 18px;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:0.5px solid var(--bd);
+}
+.nav a.navlink{
+  display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;text-decoration:none;
+  color:var(--tx2);padding:6px 11px;border-radius:8px;border:0.5px solid var(--bd);background:var(--sf);
+  min-height:32px;transition:all .12s;
+}
+.nav a.navlink:hover{background:var(--sf2);color:var(--tx);}
+.nav .nav-sp{flex:1;}
+.nav .ti{font-size:15px;}
+
+/* ---- layout ---- */
+.wrap{max-width:760px;margin:0 auto;padding:26px 20px 64px;}
+.eyebrow{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--cm,var(--coral-m));display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.badge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--cl,var(--coral-l));color:var(--cd,var(--coral-d));letter-spacing:.02em;text-transform:none;}
+h1.page-t{font-size:25px;line-height:1.3;font-weight:700;margin:12px 0 6px;letter-spacing:-0.01em;}
+.lead{font-size:14px;color:var(--tx2);margin:0 0 8px;}
+
+.sec{margin-top:30px;}
+.sec-h{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:700;margin:0 0 12px;padding-bottom:8px;border-bottom:2px solid var(--bd);}
+.sec-h .ti{font-size:18px;color:var(--coral-m);}
+.sec-h .mini{margin-left:auto;font-size:11px;font-weight:600;color:var(--tx3);display:inline-flex;align-items:center;gap:4px;border:0.5px solid var(--bd);border-radius:20px;padding:2px 9px;}
+.intro p{font-size:14.5px;line-height:1.85;margin:0 0 12px;color:var(--tx);}
+.intro strong{font-weight:700;color:var(--coral-d);}
+
+/* ---- vocab table → responsive cards ---- */
+.vocab{width:100%;border-collapse:collapse;font-size:13px;}
+.vocab th,.vocab td{border:0.5px solid var(--bd);padding:8px 10px;text-align:left;vertical-align:top;}
+.vocab thead th{background:var(--sf2);font-weight:700;color:var(--tx2);font-size:11.5px;white-space:nowrap;}
+.vocab td.no{color:var(--tx3);font-variant-numeric:tabular-nums;width:30px;text-align:center;}
+.vocab .term{font-weight:700;color:var(--tx);}
+.vocab tbody tr:nth-child(odd){background:var(--sf);}
+@media (max-width:720px){
+  .vocab,.vocab tbody,.vocab tr,.vocab td{display:block;width:100%;}
+  .vocab thead{display:none;}
+  .vocab tbody tr{border:0.5px solid var(--bd);border-radius:11px;margin-bottom:10px;padding:11px 13px;background:var(--sf);}
+  .vocab tbody tr:nth-child(odd){background:var(--sf);}
+  .vocab td{border:none;padding:4px 0;}
+  .vocab td.no{display:inline-block;width:auto;text-align:left;color:var(--tx3);font-size:11px;padding:0;}
+  .vocab td.term-cell{font-size:16.5px;padding:0 0 4px;}
+  .vocab td[data-label]:before{content:attr(data-label);display:block;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px;}
+}
+
+/* ---- passage / translation / sources ---- */
+.passage{border:0.5px solid var(--bd);border-radius:12px;padding:16px 18px;background:var(--sf);font-size:14.5px;line-height:1.85;}
+.passage.en{font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;}
+.passage strong{font-weight:700;color:var(--coral-d);}
+.passage-lab{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3);margin:0 0 8px;}
+.passage.ja{margin-top:14px;background:var(--sf2);}
+.sources{list-style:none;margin:14px 0 0;padding:0;font-size:12.5px;}
+.sources li{padding:8px 0;border-bottom:0.5px solid var(--bd);color:var(--tx2);line-height:1.6;}
+.sources li:last-child{border-bottom:none;}
+.sources .src-n{font-weight:600;color:var(--tx);}
+.sources .src-k{font-size:11px;color:var(--tx3);margin-left:6px;}
+.sources a{word-break:break-all;}
+
+/* ---- talks (この講演を聞くなら覚える単語) ---- */
+.talks-intro{font-size:13px;color:var(--tx2);margin:0 0 14px;}
+.talks-back{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--coral-m);text-decoration:none;}
+.talks-grp{margin-top:16px;}
+.talks-grp-h{font-size:12.5px;font-weight:700;color:var(--tx2);display:flex;align-items:center;gap:7px;margin:0 0 9px;}
+.talks-grp-h .dot{width:9px;height:9px;border-radius:50%;background:var(--gd,var(--coral));flex-shrink:0;}
+.g-near{--gd:var(--coral);}.g-close{--gd:var(--teal);}.g-rel{--gd:var(--purple);}
+.talk{display:flex;gap:13px;align-items:flex-start;padding:11px 13px;border:0.5px solid var(--bd);border-radius:11px;background:var(--sf);margin-bottom:8px;}
+.talk-when{flex-shrink:0;width:112px;font-size:11.5px;line-height:1.45;font-variant-numeric:tabular-nums;}
+.talk-when .tm{font-weight:700;color:var(--tx);display:block;}
+.talk-when .stg{color:var(--tx3);font-weight:500;}
+.talk-ttl{font-size:13.5px;font-weight:600;color:var(--tx);line-height:1.42;}
+.talk-rec .talk-when .tm{color:var(--tx3);font-weight:600;}
+@media (max-width:720px){
+  .talk{flex-direction:column;gap:3px;}
+  .talk-when{width:auto;}
+}
+
+/* ---- hub (index) ---- */
+.hub-lead{font-size:14px;color:var(--tx2);margin:6px 0 4px;}
+.tier{margin-top:26px;}
+.tier-lab{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700;margin:0 0 4px;}
+.tier-lab .pill{font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--cl);color:var(--cd);}
+.tier-sub{font-size:12px;color:var(--tx3);margin:0 0 12px;}
+.topics{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.tcard{display:flex;flex-direction:column;gap:5px;border:0.5px solid var(--bd);border-left:3px solid var(--c,var(--coral));border-radius:12px;padding:14px 16px;background:var(--sf);text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .12s,background .12s;}
+.tcard:hover{transform:translateY(-2px);background:var(--sf2);}
+.tcard-no{font-size:11px;font-weight:700;color:var(--cm,var(--coral-m));letter-spacing:.04em;}
+.tcard-t{font-size:15px;font-weight:700;line-height:1.35;color:var(--tx);}
+.tcard-sum{font-size:12.5px;color:var(--tx2);line-height:1.55;}
+@media (max-width:720px){.topics{grid-template-columns:1fr;}}
+
+/* ---- footer ---- */
+.foot{max-width:760px;margin:40px auto 0;padding:18px 20px 40px;border-top:0.5px solid var(--bd);font-size:11.5px;line-height:1.7;color:var(--tx3);}
+.foot .note{display:flex;gap:7px;align-items:flex-start;margin-top:8px;}
+.foot .ti{font-size:14px;flex-shrink:0;margin-top:1px;}
+.foot a{color:var(--tx2);}
+
+/* ---- reduced motion ---- */
+@media (prefers-reduced-motion:reduce){*{transition:none!important;}}

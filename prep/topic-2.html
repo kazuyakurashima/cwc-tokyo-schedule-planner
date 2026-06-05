@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Topic 2 一番賢いモデルではなく、仕事に合うモデルを選ぶ — CwC Tokyo 予習</title>
+<meta name="description" content="一番賢いモデルではなく仕事に合うモデルを。tradeoff・test time compute・eval。"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Cpath d='M16 3.5l2.6 8.1L26 7.5l-4.1 7.4 8.1 2.6-8.1 2.6 4.1 7.4-7.4-4.1L16 31l-2.6-7.6-7.4 4.1 4.1-7.4L2 17.5l8.1-2.6L6 7.5l7.4 4.1L16 3.5z' fill='%23D85A30'/%3E%3Ccircle cx='16' cy='17.5' r='4.3' fill='%23F4A180'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="/prep/prep.css">
+</head>
+<body>
+<nav class="nav">
+    <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
+    <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
+    <span class="nav-sp"></span>
+    <a class="navlink" href="/prep/topic-1.html" aria-label="前のトピック"><i class="ti ti-chevron-left" aria-hidden="true"></i>Topic 1</a>
+    <a class="navlink" href="/prep/topic-3.html" aria-label="次のトピック">Topic 3<i class="ti ti-chevron-right" aria-hidden="true"></i></a>
+  </nav>
+<main class="wrap tier-high">
+  <div class="eyebrow">技術英語リーディング帳 · Topic 2<span class="badge">重要</span></div>
+  <h1 class="page-t">一番賢いモデルではなく、仕事に合うモデルを選ぶ</h1>
+
+  <section class="sec intro">
+    <h2 class="sec-h"><i class="ti ti-bulb" aria-hidden="true"></i>このトピックの概要<span class="mini"><i class="ti ti-clock" aria-hidden="true"></i>約1分</span></h2>
+    <p>モデル選びは「一番賢いものを選べばいい」という話ではありません。同じ仕事でも、賢さ・速度・コストのあいだには <strong>tradeoff(取捨選択)</strong> があります。性能を伸ばすレバーには、モデルの基礎能力を高める <strong>train time compute(訓練時の計算量)</strong> と、答える瞬間＝<strong>inference time(推論時)</strong> に追加の計算やトークンを使う <strong>test time compute(推論時に使う追加計算量)</strong> があります。後者を増やすと、難しいタスクでは品質や正答率が上がることがありますが、<strong>latency(応答遅延)</strong> とコストも増えます。また、努力量を最大まで上げても、タスクによっては伸びが小さくなる <strong>diminishing returns(逓減する効果)</strong> が現れます。だから常に最強のモデルを選ぶ必要はありません。複雑な推論や高度なコーディングなら大きいモデルから、単純な分類・抽出・大量処理なら小さいモデルから試し、最後は <strong>eval(評価)</strong> で測って決めるのが基本です。</p>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙</h2>
+    <table class="vocab">
+    <thead><tr><th>#</th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <tbody><tr>
+    <td class="no" data-label="#">1</td>
+    <td class="term-cell" data-label="用語"><span class="term">tradeoff</span></td>
+    <td data-label="一般的な意味">トレードオフ、取捨選択</td>
+    <td data-label="講演文脈での意味">賢さ・速度・コストの何を取り何を諦めるか</td>
+    <td data-label="語源・由来">trade(交換)+ off</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">2</td>
+    <td class="term-cell" data-label="用語"><span class="term">train time compute</span></td>
+    <td data-label="一般的な意味">訓練時の計算量</td>
+    <td data-label="講演文脈での意味">モデルの基礎能力を高めるため訓練段階で投入する計算資源</td>
+    <td data-label="語源・由来">compute は computation(計算)の省略</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">3</td>
+    <td class="term-cell" data-label="用語"><span class="term">test time compute</span></td>
+    <td data-label="一般的な意味">推論時に使う追加計算量</td>
+    <td data-label="講演文脈での意味">inference time に使う追加の計算。思考やツール使用などの形をとる</td>
+    <td data-label="語源・由来">test time=「本番で試される時」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">4</td>
+    <td class="term-cell" data-label="用語"><span class="term">inference time</span></td>
+    <td data-label="一般的な意味">推論時</td>
+    <td data-label="講演文脈での意味">モデルが答えを出す時点</td>
+    <td data-label="語源・由来">infer(推し量る)+ -ence</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">5</td>
+    <td class="term-cell" data-label="用語"><span class="term">latency</span></td>
+    <td data-label="一般的な意味">応答遅延、遅さ</td>
+    <td data-label="講演文脈での意味">答えが返るまでの待ち時間。考えさせるほど長くなる</td>
+    <td data-label="語源・由来">ラテン語 latere「隠れている」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">6</td>
+    <td class="term-cell" data-label="用語"><span class="term">diminishing returns</span></td>
+    <td data-label="一般的な意味">逓減する効果</td>
+    <td data-label="講演文脈での意味">努力を増やしても、タスクによっては伸びが小さくなること</td>
+    <td data-label="語源・由来">経済学の用語。diminish はラテン語 minus「より少なく」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">7</td>
+    <td class="term-cell" data-label="用語"><span class="term">eval</span></td>
+    <td data-label="一般的な意味">評価</td>
+    <td data-label="講演文脈での意味">出来をテストで確かめる仕組み</td>
+    <td data-label="語源・由来">evaluation の省略</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">8</td>
+    <td class="term-cell" data-label="用語"><span class="term">rule of thumb</span></td>
+    <td data-label="一般的な意味">経験則、目安</td>
+    <td data-label="講演文脈での意味">ざっくりした実用的な目安</td>
+    <td data-label="語源・由来">親指で大まかに測った慣習が由来とされる</td>
+  </tr></tbody>
+  </table>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-book-2" aria-hidden="true"></i>英文リーディング</h2>
+    <p class="passage-lab">English Reading Passage</p>
+    <div class="passage en">Choosing a model is a <strong>tradeoff</strong> between intelligence, speed, and cost. Anthropic raises capability with two levers. <strong>Train time compute</strong> improves the model's base capability during training, while <strong>test time compute</strong> is extra compute used at <strong>inference time</strong>, often by letting the model spend more tokens thinking, calling tools, or working through a task before it answers. More tokens tend to raise quality and accuracy on hard problems, but they also raise <strong>latency</strong> and cost, and the gains often show <strong>diminishing returns</strong> at the highest effort. So the goal is not always the smartest model. The best way to choose is not to guess but to build hard <strong>eval</strong> sets and measure each option. A useful <strong>rule of thumb</strong> from the docs: for complex reasoning or coding, start with a larger model; for simple, high-volume, or low-latency tasks, a smaller one is often enough.</div>
+    <p class="passage-lab" style="margin-top:14px">日本語訳</p><div class="passage ja">モデル選びは、賢さ・速度・コストのあいだの <strong>tradeoff(取捨選択)</strong> です。Anthropic は二つのレバーで能力を高めます。<strong>train time compute(訓練時の計算量)</strong> は訓練段階でモデルの基礎能力を高め、<strong>test time compute(推論時に使う追加計算量)</strong> は <strong>inference time(推論時)</strong> に使う追加の計算で、多くの場合、答える前にモデルにより多くのトークンを使って考えさせたり、ツールを呼ばせたり、タスクを順に進めさせたりする形をとります。トークンが多いほど難問では品質と正答率が上がる傾向がありますが、<strong>latency(応答遅延)</strong> とコストも増え、最も高い努力度ではしばしば <strong>diminishing returns(逓減する効果)</strong> が現れます。ですから目指すべきは常に一番賢いモデルとは限りません。選ぶ最良の方法は、勘に頼らず、難しい <strong>eval(評価)</strong> のセットを作って各選択肢を測ることです。Docs で語られる役立つ <strong>rule of thumb(経験則)</strong> はこうです。複雑な推論やコーディングなら大きいモデルから始め、単純・大量・低遅延の仕事なら小さいモデルで十分なことが多い。</div>
+    <p class="passage-lab" style="margin-top:16px">使用ソースとリンク</p>
+    <ul class="sources"><li>
+    <span class="src-n">The thinking lever（講演書き起こし）</span><span class="src-k">講演</span>
+    <br><a href="https://www.youtube.com/watch?v=T7KqH7kYnE4" target="_blank" rel="noopener">https://www.youtube.com/watch?v=T7KqH7kYnE4</a>
+  </li>
+<li>
+    <span class="src-n">Choosing the right model</span><span class="src-k">Docs</span>
+    <br><a href="https://docs.claude.com/en/docs/about-claude/models/choosing-a-model" target="_blank" rel="noopener">https://docs.claude.com/en/docs/about-claude/models/choosing-a-model</a>
+  </li>
+<li>
+    <span class="src-n">Models overview</span><span class="src-k">Docs</span>
+    <br><a href="https://docs.claude.com/en/docs/about-claude/models/overview" target="_blank" rel="noopener">https://docs.claude.com/en/docs/about-claude/models/overview</a>
+  </li>
+<li>
+    <span class="src-n">統合ソースマップ v1</span><span class="src-k">ユーザー提供資料</span>
+    
+  </li></ul>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-microphone" aria-hidden="true"></i>この講演を聞くなら覚える単語</h2>
+    <p class="talks-intro">下記の講演を聞く予定なら、<strong>上の「重要語彙」</strong>を覚えておくと当日の聞き取りがぐっと楽になります。<br>並びは<strong>トピックとの関連性</strong>の順で、講演自体の優劣ではありません。</p>
+    <div class="talks-grp">
+      <div class="talks-grp-h g-near"><span class="dot"></span>このトピックに一番沿っている講演</div>
+      <div class="talk"><div class="talk-when"><span class="tm">6/10 10:30 – 11:15</span><span class="stg">Workshop</span></div><div class="talk-ttl">Picking the right model</div></div>
+<div class="talk"><div class="talk-when"><span class="tm">6/10 15:20 – 15:50</span><span class="stg">Main stage</span></div><div class="talk-ttl">The capability curve</div></div>
+<div class="talk"><div class="talk-when"><span class="tm">6/10 13:50 – 14:20</span><span class="stg">Breakout stage</span></div><div class="talk-ttl">The thinking lever</div></div>
+    </div>
+<div class="talks-grp">
+      <div class="talks-grp-h g-close"><span class="dot"></span>このトピックに内容が近い講演</div>
+      <div class="talk"><div class="talk-when"><span class="tm">6/10 16:50 – 17:20</span><span class="stg">Main stage</span></div><div class="talk-ttl">Getting more out of the Claude Platform</div></div>
+    </div>
+
+    <a class="talks-back" href="/#day1"><i class="ti ti-arrow-left" aria-hidden="true"></i>プランナーで参加予定を決める</a>
+  </section>
+  </main>
+<footer class="foot">
+    <div>非公式の個人制作による予習教材です。語彙・英文・出典は教材本文に基づきます。セッション名・時間・タイトルは<a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">公式ページ</a>を正とし、差異がある場合は公式を優先してください。</div>
+    <div class="note"><i class="ti ti-info-circle" aria-hidden="true"></i><span>This is an unofficial personal study aid for Code with Claude Tokyo. Talk titles and times are from the official event page.</span></div>
+  </footer>
+</body>
+</html>
