@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Topic 8 プロンプトを「直す」技術と、ボトルネックが動いた組織 — AI前提のつくり方 — CwC Tokyo 予習</title>
+<meta name="description" content="プロンプトを「直す」技術と、ボトルネックが動いた組織。eval・verification・dogfooding。"><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7.5' fill='%23181816'/%3E%3Cpath d='M16 3.5l2.6 8.1L26 7.5l-4.1 7.4 8.1 2.6-8.1 2.6 4.1 7.4-7.4-4.1L16 31l-2.6-7.6-7.4 4.1 4.1-7.4L2 17.5l8.1-2.6L6 7.5l7.4 4.1L16 3.5z' fill='%23D85A30'/%3E%3Ccircle cx='16' cy='17.5' r='4.3' fill='%23F4A180'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="stylesheet" href="/prep/prep.css">
+</head>
+<body>
+<nav class="nav">
+    <a class="navlink" href="/prep/"><i class="ti ti-layout-grid" aria-hidden="true"></i>予習トップ</a>
+    <a class="navlink" href="/#day1"><i class="ti ti-calendar" aria-hidden="true"></i>プランナーへ戻る</a>
+    <span class="nav-sp"></span>
+    <a class="navlink" href="/prep/topic-7.html" aria-label="前のトピック"><i class="ti ti-chevron-left" aria-hidden="true"></i>Topic 7</a>
+    
+  </nav>
+<main class="wrap tier-opt">
+  <div class="eyebrow">技術英語リーディング帳 · Topic 8<span class="badge">追いたい</span></div>
+  <h1 class="page-t">プロンプトを「直す」技術と、ボトルネックが動いた組織 — AI前提のつくり方</h1>
+
+  <section class="sec intro">
+    <h2 class="sec-h"><i class="ti ti-bulb" aria-hidden="true"></i>このトピックの概要<span class="mini"><i class="ti ti-clock" aria-hidden="true"></i>約1分</span></h2>
+    <p>Topic 8 には二つの顔があります。一つは、実務のプロンプトはゼロから書く美しい完成品ではなく、複数人が継ぎ足し policy も tone も古い継ぎ当ても混在した文章なので、<strong>eval(評価)</strong> を起点に <strong>failure mode(失敗モード)</strong> を一つずつ潰して「直す」という技術。もう一つは、その技術を回すチームそのものの話で、コードを書く速度が上がった結果 <strong>bottleneck(隘路)</strong> が移動し、かつて engineering <strong>bandwidth(処理能力)</strong> を守るために置いた計画やレビューの慣習が「静かに機能しなくなる」という変化です。前者では、命じても外部の実行能力（<strong>capability</strong>）は増えずツール付与が要る、賢いモデルは古い強すぎる指示に過剰反応（<strong>overfit</strong> 的な挙動）する、といった教訓が出ます。後者では、新しい隘路は <strong>verification(検証)</strong> に移り、自動化で早期に捕まえる <strong>shift left</strong> や、製品感覚を養う <strong>dogfooding(自社製品の実利用)</strong>、コードを <strong>source of truth(信頼の源泉)</strong> にする運用、そして古い処理を捨てる許可を含む <strong>forcing function(強制力のある原則)</strong> が語られます。共通する芯は、<strong>growth mindset(成長思考)</strong> で「この型はまだ目的を果たしているか」を絶えず問い直す姿勢です。</p>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙</h2>
+    <table class="vocab">
+    <thead><tr><th>#</th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <tbody><tr>
+    <td class="no" data-label="#">1</td>
+    <td class="term-cell" data-label="用語"><span class="term">eval (evaluation)</span></td>
+    <td data-label="一般的な意味">「評価」</td>
+    <td data-label="講演文脈での意味">変更が本当に改善につながったかを測る仕組み。改善の起点</td>
+    <td data-label="語源・由来">evaluate「価値を見積もる」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">2</td>
+    <td class="term-cell" data-label="用語"><span class="term">failure mode</span></td>
+    <td data-label="一般的な意味">句的表現：失敗の出方・型</td>
+    <td data-label="講演文脈での意味">プロンプトが崩れる具体的な不具合パターン</td>
+    <td data-label="語源・由来">工学の「故障モード」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">3</td>
+    <td class="term-cell" data-label="用語"><span class="term">hygiene (general hygiene)</span></td>
+    <td data-label="一般的な意味">「衛生」</td>
+    <td data-label="講演文脈での意味">プロンプト全体を整える基本のお掃除</td>
+    <td data-label="語源・由来">ギリシャ語 hygies「健康な」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">4</td>
+    <td class="term-cell" data-label="用語"><span class="term">output contract</span></td>
+    <td data-label="一般的な意味">句的表現：出力の取り決め</td>
+    <td data-label="講演文脈での意味">出力形式を約束として明示する設計</td>
+    <td data-label="語源・由来">contract「契約」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">5</td>
+    <td class="term-cell" data-label="用語"><span class="term">overfit</span></td>
+    <td data-label="一般的な意味">「過適合する」</td>
+    <td data-label="講演文脈での意味">機械学習の厳密語ではなく比喩。古い強すぎる指示や一部ケースに過剰反応する様</td>
+    <td data-label="語源・由来">統計の overfitting から転用</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">6</td>
+    <td class="term-cell" data-label="用語"><span class="term">capability</span></td>
+    <td data-label="一般的な意味">「能力」</td>
+    <td data-label="講演文脈での意味">モデルやシステムが実際に遂行できる能力。外部実行能力は指示では増えない</td>
+    <td data-label="語源・由来">capable「〜できる」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">7</td>
+    <td class="term-cell" data-label="用語"><span class="term">generate–evaluate–repair loop</span></td>
+    <td data-label="一般的な意味">句的表現：生成→評価→修復の反復</td>
+    <td data-label="講演文脈での意味">生成・評価・修復を独立プロンプトで回す方式。流れが決め打ちなら厳密には workflow、LLM自身が動的に決めるなら agent</td>
+    <td data-label="語源・由来">Anthropic は workflow と agent を区別</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">8</td>
+    <td class="term-cell" data-label="用語"><span class="term">bottleneck</span></td>
+    <td data-label="一般的な意味">「隘路、ボトルネック」</td>
+    <td data-label="講演文脈での意味">全体の速度を律する制約。今は移動し続けている</td>
+    <td data-label="語源・由来">瓶の首の細さから</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">9</td>
+    <td class="term-cell" data-label="用語"><span class="term">bandwidth</span></td>
+    <td data-label="一般的な意味">「帯域幅、処理できる量」</td>
+    <td data-label="講演文脈での意味">エンジニアが捌ける作業量。コードを書く速度だけが主制約ではなくなった</td>
+    <td data-label="語源・由来">通信の「帯域」由来</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">10</td>
+    <td class="term-cell" data-label="用語"><span class="term">verification</span></td>
+    <td data-label="一般的な意味">「検証、確認」</td>
+    <td data-label="講演文脈での意味">量が増えた今の新しい隘路。正しさの担保</td>
+    <td data-label="語源・由来">verify「真と確かめる」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">11</td>
+    <td class="term-cell" data-label="用語"><span class="term">shift left</span></td>
+    <td data-label="一般的な意味">句的表現：工程の前倒し</td>
+    <td data-label="講演文脈での意味">不具合を源流に近い段階で自動的に捕まえる発想</td>
+    <td data-label="語源・由来">工程図の「左＝早い段階」</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">12</td>
+    <td class="term-cell" data-label="用語"><span class="term">dogfooding</span></td>
+    <td data-label="一般的な意味">句的表現：自社製品を自分で使う</td>
+    <td data-label="講演文脈での意味">製品感覚を養うために作り手が日常使いすること</td>
+    <td data-label="語源・由来">&quot;eat your own dog food&quot;</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">13</td>
+    <td class="term-cell" data-label="用語"><span class="term">source of truth</span></td>
+    <td data-label="一般的な意味">句的表現：唯一の正しい参照元</td>
+    <td data-label="講演文脈での意味">最も正しいと信じる単一の拠り所。ここではコード</td>
+    <td data-label="語源・由来">DB用語 single source of truth</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">14</td>
+    <td class="term-cell" data-label="用語"><span class="term">forcing function</span></td>
+    <td data-label="一般的な意味">句的表現：強制力のある仕掛け</td>
+    <td data-label="講演文脈での意味">チームに望ましい行動を必ず起こさせる原則</td>
+    <td data-label="語源・由来">設計・行動経済学の用語</td>
+  </tr>
+<tr>
+    <td class="no" data-label="#">15</td>
+    <td class="term-cell" data-label="用語"><span class="term">growth mindset</span></td>
+    <td data-label="一般的な意味">句的表現：成長思考</td>
+    <td data-label="講演文脈での意味">型や前提を絶えず見直し更新し続ける姿勢</td>
+    <td data-label="語源・由来">心理学者 Dweck の概念</td>
+  </tr></tbody>
+  </table>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-book-2" aria-hidden="true"></i>英文リーディング</h2>
+    <p class="passage-lab">English Reading Passage</p>
+    <div class="passage en">Working with Claude becomes truly AI-native when one habit reshapes both the prompt and the team: a <strong>growth mindset</strong> that keeps asking whether each old practice still earns its place. On the craft side, good prompting is rarely written from scratch. You debug an existing prompt with an <strong>eval</strong>, clean it up with basic prompt <strong>hygiene</strong>, and fix its <strong>failure modes</strong> one at a time. The key lesson is that instructions alone do not create new <strong>capabilities</strong> — when a task requires external action or reliable verification, you give the model tools or split the work into a generate–evaluate–repair loop. On the team side, the <strong>bottleneck</strong> has moved. Coding throughput is no longer the only constraint, so <strong>verification</strong>, review, and ownership become more important, and code can become the practical <strong>source of truth</strong>.</div>
+    <p class="passage-lab" style="margin-top:14px">日本語訳</p><div class="passage ja">Claudeを使う営みが本当に <strong>AI-native(AI前提)</strong> になるのは、一つの習慣がプロンプトとチームの両方を組み替えるときだ。それは、古い慣習の一つひとつに「まだ存在価値があるか」を問い続ける <strong>growth mindset(成長思考)</strong> である。技術の側では、良いプロンプトはゼロから書くことはまれだ。既存のプロンプトを <strong>eval(評価)</strong> でデバッグし、基本のプロンプト <strong>hygiene(お掃除)</strong> で整え、その <strong>failure modes(失敗モード)</strong> を一つずつ直していく。核心となる教訓は、指示だけでは新しい <strong>capabilities(実行能力)</strong> は生まれないということ——外部への働きかけや確実な検証が要る仕事では、モデルにツール(tool)を与えるか、「生成→評価→修復」の loop(反復) に分ける。チームの側では、<strong>bottleneck(隘路)</strong> が移動した。コードを書く速度(coding throughput)だけが唯一の制約ではなくなり、<strong>verification(検証)</strong>・レビュー・責任範囲の整理がより重要になって、コードが実務上の <strong>source of truth(唯一の正しい参照元)</strong> になりうる。</div>
+    <p class="passage-lab" style="margin-top:16px">使用ソースとリンク</p>
+    <ul class="sources"><li>
+    <span class="src-n">The prompting playbook（講演）</span><span class="src-k">講演</span>
+    <br><a href="https://www.youtube.com/watch?v=G2B0YWuJUgI" target="_blank" rel="noopener">https://www.youtube.com/watch?v=G2B0YWuJUgI</a>
+  </li>
+<li>
+    <span class="src-n">Running an AI-native engineering org（講演, Fiona Fung）</span><span class="src-k">講演</span>
+    <br><a href="https://www.youtube.com/watch?v=IA5LWIGqnyM" target="_blank" rel="noopener">https://www.youtube.com/watch?v=IA5LWIGqnyM</a>
+  </li>
+<li>
+    <span class="src-n">Prompt engineering overview</span><span class="src-k">公式Docs</span>
+    <br><a href="https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview" target="_blank" rel="noopener">https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview</a>
+  </li>
+<li>
+    <span class="src-n">Building effective agents</span><span class="src-k">公式Blog</span>
+    <br><a href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">https://www.anthropic.com/engineering/building-effective-agents</a>
+  </li>
+<li>
+    <span class="src-n">統合ソースマップ v1</span><span class="src-k">ユーザー資料</span>
+    
+  </li></ul>
+  </section>
+
+  <section class="sec">
+    <h2 class="sec-h"><i class="ti ti-microphone" aria-hidden="true"></i>この講演を聞くなら覚える単語</h2>
+    <p class="talks-intro">下記の講演を聞く予定なら、<strong>上の「重要語彙」</strong>を覚えておくと当日の聞き取りがぐっと楽になります。<br>並びは<strong>トピックとの関連性</strong>の順で、講演自体の優劣ではありません。</p>
+    <div class="talks-grp">
+      <div class="talks-grp-h g-near"><span class="dot"></span>このトピックに一番沿っている講演</div>
+      <div class="talk"><div class="talk-when"><span class="tm">6/10 17:30 – 18:15</span><span class="stg">Workshop</span></div><div class="talk-ttl">The prompting playbook</div></div>
+<div class="talk"><div class="talk-when"><span class="tm">6/10 14:35 – 15:05</span><span class="stg">Breakout stage</span></div><div class="talk-ttl">Running an AI-native engineering org</div></div>
+    </div>
+<div class="talks-grp">
+      <div class="talks-grp-h g-close"><span class="dot"></span>このトピックに内容が近い講演</div>
+      <div class="talk talk-rec"><div class="talk-when"><span class="tm">参考録画 (London)</span></div><div class="talk-ttl">Building AI-native at enterprise scale (monday.com / Doctolib / Delivery Hero)</div></div>
+<div class="talk talk-rec"><div class="talk-when"><span class="tm">参考録画 (London)</span></div><div class="talk-ttl">From one person to 80: Scaling a hypergrowth engineering org with Claude Code</div></div>
+    </div>
+
+    <a class="talks-back" href="/#day1"><i class="ti ti-arrow-left" aria-hidden="true"></i>プランナーで参加予定を決める</a>
+  </section>
+  </main>
+<footer class="foot">
+    <div>非公式の個人制作による予習教材です。語彙・英文・出典は教材本文に基づきます。セッション名・時間・タイトルは<a href="https://claude.com/code-with-claude/tokyo" target="_blank" rel="noopener">公式ページ</a>を正とし、差異がある場合は公式を優先してください。</div>
+    <div class="note"><i class="ti ti-info-circle" aria-hidden="true"></i><span>This is an unofficial personal study aid for Code with Claude Tokyo. Talk titles and times are from the official event page.</span></div>
+  </footer>
+</body>
+</html>
