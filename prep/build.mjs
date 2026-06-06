@@ -237,10 +237,21 @@ function talksSection(meta) {
     const r = REL[rel];
     const rows = items.map(t => {
       const rec = !t.time;
-      const when = rec
-        ? `<span class="tm">${esc(t.stage)}</span>`
-        : `<span class="tm">${esc(t.date)} ${esc(t.time)}</span><span class="stg">${esc(t.stage)}</span>`;
-      return `<div class="talk${rec ? ' talk-rec' : ''}"><div class="talk-when">${when}</div><div class="talk-ttl">${esc(t.title)}</div></div>`;
+      // ステージ種別に応じたスタイルクラス
+      const stgCls = rec ? 'stg-rec'
+        : /Main/i.test(t.stage) ? 'stg-main'
+        : /Breakout/i.test(t.stage) ? 'stg-brk'
+        : /Workshop/i.test(t.stage) ? 'stg-ws' : '';
+      const meta = rec
+        ? `<div class="talk-meta"><span class="talk-stg ${stgCls}">${esc(t.stage)}</span></div>`
+        : `<div class="talk-meta">
+            <span class="talk-time"><span class="talk-date">${esc(t.date)}</span><span class="talk-clock">${esc(t.time)}</span></span>
+            <span class="talk-stg ${stgCls}">${esc(t.stage)}</span>
+          </div>`;
+      return `<div class="talk${rec ? ' talk-rec' : ''}">
+        ${meta}
+        <div class="talk-ttl">${esc(t.title)}</div>
+      </div>`;
     }).join('\n');
     return `<div class="talks-grp">
       <div class="talks-grp-h ${r.grp}"><i class="ti ${r.icon}" aria-hidden="true"></i>${esc(r.label)}</div>
