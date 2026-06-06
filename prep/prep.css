@@ -135,11 +135,18 @@ a.src-row:hover .src-n{color:var(--coral-d);}
 .stg-rec   {background:var(--sf3);color:var(--tx2);}
 /* タイトル: 主役 */
 .talk-ttl{font-size:13.5px;font-weight:600;color:var(--tx);line-height:1.5;}
+.talk-body{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.talk-plan{min-height:30px;display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:0 0 auto;border:1px solid var(--coral);border-radius:7px;background:var(--bg);color:var(--coral-d);font-size:11.5px;font-weight:700;line-height:1;padding:0 10px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s,border-color .12s,color .12s;}
+.talk-plan .ti{font-size:14px;}
+.talk-plan:hover{background:var(--coral-l);}
+.talk-plan.on{background:var(--coral);border-color:var(--coral);color:#fff;}
 /* 参考録画: メタ全体を少し淡く */
 .talk-rec .talk-ttl{color:var(--tx2);}
 @media (max-width:720px){
   .talk{padding:11px 13px;gap:6px;}
   .talk-clock{font-size:12.5px;}
+  .talk-body{align-items:stretch;flex-direction:column;gap:9px;}
+  .talk-plan{width:100%;}
 }
 
 /* ---- hub (index) ---- */

@@ -4,6 +4,34 @@
 (function () {
   'use strict';
   var KEY = 'cwc_tokyo_2026_prep_words';
+  var PLAN_KEY_DAY1 = 'cwc_tokyo_2026_day1';
+  var DAY1_SESSIONS = [
+    { id: 'm1', s: '10:30', e: '11:00' },
+    { id: 'b1', s: '10:30', e: '11:00' },
+    { id: 'w1', s: '10:30', e: '11:15' },
+    { id: 'm2', s: '11:15', e: '11:45' },
+    { id: 'b2', s: '11:15', e: '11:45' },
+    { id: 'w2', s: '11:30', e: '12:15' },
+    { id: 'm3', s: '12:00', e: '12:30' },
+    { id: 'b3', s: '12:00', e: '12:30' },
+    { id: 'w3', s: '12:30', e: '13:15' },
+    { id: 'w4', s: '13:30', e: '14:15' },
+    { id: 'm4', s: '13:50', e: '14:20' },
+    { id: 'b4', s: '13:50', e: '14:20' },
+    { id: 'w5', s: '14:30', e: '15:15' },
+    { id: 'm5', s: '14:35', e: '15:05' },
+    { id: 'b5', s: '14:35', e: '15:05' },
+    { id: 'm6', s: '15:20', e: '15:50' },
+    { id: 'b6', s: '15:20', e: '15:50' },
+    { id: 'w6', s: '15:30', e: '16:15' },
+    { id: 'm7', s: '16:05', e: '16:35' },
+    { id: 'b7', s: '16:05', e: '16:35' },
+    { id: 'w7', s: '16:30', e: '17:15' },
+    { id: 'm8', s: '16:50', e: '17:20' },
+    { id: 'b8', s: '16:50', e: '17:20' },
+    { id: 'w8', s: '17:30', e: '18:15' },
+    { id: 'm9', s: '17:35', e: '18:05' }
+  ];
 
   function load() {
     try {
@@ -15,8 +43,28 @@
     try { localStorage.setItem(KEY, JSON.stringify(Array.from(set))); }
     catch (e) { /* プライベートブラウズ等の書込失敗は握りつぶす（NFR-P8） */ }
   }
+  function loadPlan() {
+    try {
+      var a = JSON.parse(localStorage.getItem(PLAN_KEY_DAY1) || '[]');
+      return new Set(Array.isArray(a) ? a : []);
+    } catch (e) { return new Set(); }
+  }
+  function savePlan(set) {
+    try { localStorage.setItem(PLAN_KEY_DAY1, JSON.stringify(Array.from(set))); }
+    catch (e) { /* localStorage unavailable: leave the UI optimistic only until reload */ }
+  }
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function min(t) {
+    var p = t.split(':').map(Number);
+    return p[0] * 60 + p[1];
+  }
+  function overlaps(a, b) {
+    return min(a.s) < min(b.e) && min(a.e) > min(b.s);
+  }
+  function findSession(id) {
+    return DAY1_SESSIONS.find(function (s) { return s.id === id; });
   }
 
   var checked = load();
@@ -40,6 +88,21 @@
     if (tr) tr.classList.toggle('ck-on', on);
   }
 
+  function setPlanBtn(btn, on) {
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    btn.innerHTML = on
+      ? '<i class="ti ti-circle-check-filled" aria-hidden="true"></i><span>参加予定</span>'
+      : '<i class="ti ti-circle-plus" aria-hidden="true"></i><span>参加する</span>';
+  }
+
+  function refreshPlanButtons() {
+    var plan = loadPlan();
+    document.querySelectorAll('.talk-plan[data-plan-id]').forEach(function (btn) {
+      setPlanBtn(btn, plan.has(btn.getAttribute('data-plan-id')));
+    });
+  }
+
   // 教材ページ: 語彙行のチェック
   function wireVocab() {
     document.querySelectorAll('tr[data-wid]').forEach(function (tr) {
@@ -53,6 +116,32 @@
         setBtn(btn, tr, checked.has(id));
         updateCounters();
       });
+    });
+  }
+
+  function wirePlannerButtons() {
+    document.querySelectorAll('.talk-plan[data-plan-id]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var id = btn.getAttribute('data-plan-id');
+        var plan = loadPlan();
+        if (plan.has(id)) {
+          plan.delete(id);
+        } else {
+          var target = findSession(id);
+          if (target) {
+            DAY1_SESSIONS.forEach(function (s) {
+              if (s.id !== id && overlaps(target, s)) plan.delete(s.id);
+            });
+          }
+          plan.add(id);
+        }
+        savePlan(plan);
+        refreshPlanButtons();
+      });
+    });
+    refreshPlanButtons();
+    window.addEventListener('storage', function (e) {
+      if (e.key === PLAN_KEY_DAY1) refreshPlanButtons();
     });
   }
 
@@ -129,6 +218,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     wireVocab();
+    wirePlannerButtons();
     updateCounters();
     renderMyWords();
     var csvBtn = document.getElementById('mw-csv');

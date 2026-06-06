@@ -25,6 +25,23 @@ const REL_ORDER = ['◎', '○', '△'];
 const T = (rel, title, time, stage) => ({ rel, title, date: time ? '6/10' : null, time, stage });
 const REC = (rel, title, note) => ({ rel, title, date: null, time: null, stage: note || '参考録画' });
 
+const PLANNER_IDS = {
+  "What's new in Claude Code": 'm1',
+  'Memory and dreaming for self-learning agents': 'b1',
+  'Picking the right model': 'w1',
+  'The expanding toolkit': 'b2',
+  'Beyond the basics with Claude Code': 'w2',
+  'How to get to production faster with Claude Managed Agents': 'm3',
+  'Stop babysitting your agents': 'w3',
+  'The thinking lever': 'b4',
+  'Build a production-ready agent with Claude Managed Agents': 'w5',
+  'Running an AI-native engineering org': 'b5',
+  'The capability curve': 'm6',
+  'Build a proactive agent workflow with Claude Code': 'w7',
+  'Getting more out of the Claude Platform': 'm8',
+  'The prompting playbook': 'w8',
+};
+
 const PREP_TOPICS = {
   1: { tier: 'must', title: 'Claude Codeとは何か',
     summary: 'コードを読み・編集し・実行する「自律的な相棒」。routines・trigger・context・steerability。',
@@ -248,9 +265,16 @@ function talksSection(meta) {
             <span class="talk-time"><span class="talk-date">${esc(t.date)}</span><span class="talk-clock">${esc(t.time)}</span></span>
             <span class="talk-stg ${stgCls}">${esc(t.stage)}</span>
           </div>`;
+      const plannerId = !rec ? PLANNER_IDS[t.title] : '';
+      const planBtn = plannerId
+        ? `<button class="talk-plan" type="button" data-plan-id="${esc(plannerId)}" aria-pressed="false"><i class="ti ti-circle-plus" aria-hidden="true"></i><span>参加する</span></button>`
+        : '';
       return `<div class="talk${rec ? ' talk-rec' : ''}">
         ${meta}
-        <div class="talk-ttl">${esc(t.title)}</div>
+        <div class="talk-body">
+          <div class="talk-ttl">${esc(t.title)}</div>
+          ${planBtn}
+        </div>
       </div>`;
     }).join('\n');
     return `<div class="talks-grp">
