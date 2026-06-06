@@ -56,6 +56,35 @@
     });
   }
 
+  // マイ単語ページ: 書き出しボタンの活性/非活性
+  function updateActions(n) {
+    ['mw-csv', 'mw-print'].forEach(function (id) {
+      var b = document.getElementById(id); if (b) b.disabled = (n === 0);
+    });
+  }
+
+  // CSV 書き出し (R1c・§8.4: UTF-8 BOM・ヘッダ＋チェック語)
+  function csvCell(s) { return '"' + String(s == null ? '' : s).replace(/"/g, '""') + '"'; }
+  function exportCsv() {
+    var data = window.PREP_DATA; if (!data) return;
+    var items = data.vocab.filter(function (v) { return checked.has(v.id); });
+    if (!items.length) return;
+    var rows = [['topic_no', 'topic_title', 'term', 'general_meaning', 'talk_meaning', 'etymology'].map(csvCell).join(',')];
+    items.forEach(function (v) {
+      var tt = (data.topics[v.topic] || {}).title || '';
+      rows.push([v.topic, tt, v.term, v.general, v.talk, v.root].map(csvCell).join(','));
+    });
+    var csv = '﻿' + rows.join('\r\n') + '\r\n'; // BOM + CRLF（Excel互換）
+    try {
+      var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = 'cwc-tokyo-my-words.csv';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+    } catch (e) { /* ダウンロード不可環境では無視 */ }
+  }
+
   // マイ単語ページ: チェック済みを集約表示
   function renderMyWords() {
     var root = document.getElementById('mywords');
@@ -63,6 +92,7 @@
     var data = window.PREP_DATA;
     var items = (data ? data.vocab : []).filter(function (v) { return checked.has(v.id); });
     var cnt = document.getElementById('mw-count'); if (cnt) cnt.textContent = items.length;
+    updateActions(items.length);
 
     if (!items.length) {
       root.innerHTML = '<div class="mw-empty"><i class="ti ti-bookmark-off" aria-hidden="true"></i>' +
@@ -101,5 +131,9 @@
     wireVocab();
     updateCounters();
     renderMyWords();
+    var csvBtn = document.getElementById('mw-csv');
+    if (csvBtn) csvBtn.addEventListener('click', exportCsv);
+    var prBtn = document.getElementById('mw-print');
+    if (prBtn) prBtn.addEventListener('click', function () { window.print(); });
   });
 })();

@@ -77,5 +77,12 @@ const pj = readFileSync(join(DIR, 'prep.js'), 'utf8');
 ok(pj.includes('cwc_tokyo_2026_prep_words'), 'prep.js: 保存キー cwc_tokyo_2026_prep_words');
 ok(!/cwc_tokyo_2026_day1|cwc_tokyo_2026_day2/.test(pj), 'prep.js: 既存 day1/day2 キーに触れない');
 
+// ---- 4) R1c: 書き出し（CSV / 印刷PDF）----
+ok(mw.includes('id="mw-csv"') && mw.includes('id="mw-print"'), 'my-words: CSV/印刷ボタン');
+ok(pj.includes('﻿'), 'prep.js: CSV に UTF-8 BOM');
+ok(/topic_no[\s\S]*topic_title[\s\S]*term[\s\S]*general_meaning[\s\S]*talk_meaning[\s\S]*etymology/.test(pj), 'prep.js: CSV ヘッダ（§8.4 スキーマ）');
+ok(pj.includes('window.print()'), 'prep.js: 印刷（window.print）');
+ok(/@media\s*print/.test(readFileSync(join(DIR, 'prep.css'), 'utf8')), 'prep.css: 印刷スタイル（@media print）');
+
 console.log(`\n${fail === 0 ? 'ALL PASS' : fail + ' FAILED'}`);
 process.exit(fail === 0 ? 0 : 1);
