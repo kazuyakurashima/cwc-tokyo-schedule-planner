@@ -59,44 +59,66 @@ h1.page-t{font-size:25px;line-height:1.3;font-weight:700;margin:12px 0 6px;lette
 .intro p{font-size:14.5px;line-height:1.85;margin:0 0 12px;color:var(--tx);}
 .intro strong{font-weight:700;color:var(--coral-d);}
 
-/* ---- vocab table → responsive cards ---- */
+/* ---- vocab table → responsive cards（#3 視覚階層 / #9 モバイル圧縮）---- */
 .vocab{width:100%;border-collapse:collapse;font-size:13px;}
-.vocab th,.vocab td{border:0.5px solid var(--bd);padding:8px 10px;text-align:left;vertical-align:top;}
+.vocab th,.vocab td{border:0.5px solid var(--bd);padding:9px 11px;text-align:left;vertical-align:top;}
 .vocab thead th{background:var(--sf2);font-weight:700;color:var(--tx2);font-size:11.5px;white-space:nowrap;}
-.vocab td.no{color:var(--tx3);font-variant-numeric:tabular-nums;width:30px;text-align:center;}
-.vocab .term{font-weight:700;color:var(--tx);}
+.vocab thead th.th-sub{font-weight:600;color:var(--tx3);}
+.vocab .term{font-weight:700;color:var(--tx);font-size:14px;}
+.vocab .v-talk{color:var(--tx);}                  /* 主役：講演文脈での意味 */
+.vocab .v-gen{color:var(--tx2);font-size:12px;}   /* 従：一般的な意味 */
+.vocab .v-root{color:var(--tx3);font-size:11.5px;}/* 従：語源・由来 */
 .vocab tbody tr:nth-child(odd){background:var(--sf);}
 @media (max-width:720px){
   .vocab,.vocab tbody,.vocab tr,.vocab td{display:block;width:100%;}
   .vocab thead{display:none;}
-  .vocab tbody tr{border:0.5px solid var(--bd);border-radius:11px;margin-bottom:10px;padding:11px 13px;background:var(--sf);}
+  .vocab tbody tr{border:0.5px solid var(--bd);border-radius:11px;margin-bottom:9px;padding:10px 13px;background:var(--sf);}
   .vocab tbody tr:nth-child(odd){background:var(--sf);}
-  .vocab td{border:none;padding:4px 0;}
-  .vocab td.no{display:inline-block;width:auto;text-align:left;color:var(--tx3);font-size:11px;padding:0;}
-  .vocab td.term-cell{font-size:16.5px;padding:0 0 4px;}
-  .vocab td[data-label]:before{content:attr(data-label);display:block;font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px;}
+  .vocab td{border:none;padding:2px 0;}
+  .vocab td.term-cell{font-size:16px;padding:0 0 3px;}
+  .vocab td.v-talk{font-size:13.5px;color:var(--tx);}
+  .vocab td.v-gen,.vocab td.v-root{font-size:11.5px;color:var(--tx3);}
+  .vocab td.is-empty{display:none;}               /* 空欄はモバイルで非表示 */
+  .vocab td.v-talk[data-label]:before{content:none;} /* 主役は用語直下の定義として見せる */
+  .vocab td[data-label]:before{content:attr(data-label);display:block;font-size:10px;font-weight:700;color:var(--tx3);letter-spacing:.03em;margin-bottom:0;}
 }
 
 /* ---- passage / translation / sources ---- */
 .passage{border:0.5px solid var(--bd);border-radius:12px;padding:16px 18px;background:var(--sf);font-size:14.5px;line-height:1.85;}
 .passage.en{font-family:"Iowan Old Style","Palatino Linotype",Georgia,serif;}
 .passage strong{font-weight:700;color:var(--coral-d);}
-.passage-lab{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3);margin:0 0 8px;}
-.passage.ja{margin-top:14px;background:var(--sf2);}
-.sources{list-style:none;margin:14px 0 0;padding:0;font-size:12.5px;}
-.sources li{padding:8px 0;border-bottom:0.5px solid var(--bd);color:var(--tx2);line-height:1.6;}
+.passage-lab{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3);margin:0;}
+.passage.ja{margin-top:8px;background:var(--sf2);}
+.passage.ja.ja-hidden{display:none;}
+/* 訳トグル（#1・既定=表示） */
+.ja-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 0 0;}
+.ja-toggle{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--coral-m);background:transparent;border:0.5px solid var(--bd2);border-radius:7px;padding:4px 10px;cursor:pointer;transition:background .12s,color .12s,border-color .12s;-webkit-tap-highlight-color:transparent;}
+.ja-toggle:hover{background:var(--coral-l);border-color:var(--coral);color:var(--coral-d);}
+.ja-toggle .ti{font-size:14px;}
+/* 出典（#5・名前リンク＋ドメインのみ＋控えめ開閉） */
+.sources-wrap{margin-top:16px;}
+.sources-sum{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;letter-spacing:.04em;color:var(--tx3);cursor:pointer;list-style:none;padding:6px 0;}
+.sources-sum::-webkit-details-marker{display:none;}
+.sources-sum .ti{font-size:14px;}
+.sources-sum .sources-c{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:17px;padding:0 5px;border-radius:9px;background:var(--sf3);color:var(--tx2);font-size:10.5px;}
+.sources-sum:hover{color:var(--tx2);}
+.sources{list-style:none;margin:6px 0 0;padding:0;font-size:12.5px;}
+.sources li{border-bottom:0.5px solid var(--bd);}
 .sources li:last-child{border-bottom:none;}
-.sources .src-n{font-weight:600;color:var(--tx);}
-.sources .src-k{font-size:11px;color:var(--tx3);margin-left:6px;}
-.sources a{word-break:break-all;}
+.src-row{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px;padding:8px 4px;text-decoration:none;color:var(--tx2);line-height:1.5;border-radius:6px;}
+a.src-row:hover{background:var(--sf);}
+a.src-row:hover .src-n{color:var(--coral-d);}
+.src-n{font-weight:600;color:var(--tx);}
+.src-k{font-size:10.5px;color:var(--tx3);}
+.src-d{margin-left:auto;display:inline-flex;align-items:center;gap:3px;font-size:11px;color:var(--tx3);white-space:nowrap;}
+.src-d .ti{font-size:12px;}
 
 /* ---- talks (この講演を聞くなら覚える単語) ---- */
 .talks-intro{font-size:13px;color:var(--tx2);margin:0 0 14px;}
 .talks-back{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--coral-m);text-decoration:none;}
 .talks-grp{margin-top:16px;}
 .talks-grp-h{font-size:12.5px;font-weight:700;color:var(--tx2);display:flex;align-items:center;gap:7px;margin:0 0 9px;}
-.talks-grp-h .dot{width:9px;height:9px;border-radius:50%;background:var(--gd,var(--coral));flex-shrink:0;}
-.g-near{--gd:var(--coral);}.g-close{--gd:var(--teal);}.g-rel{--gd:var(--purple);}
+.talks-grp-h .ti{font-size:15px;color:var(--coral-m);flex-shrink:0;}/* 単色＋塗りの濃淡でスケール表現（#8） */
 .talk{display:flex;gap:13px;align-items:flex-start;padding:11px 13px;border:0.5px solid var(--bd);border-radius:11px;background:var(--sf);margin-bottom:8px;}
 .talk-when{flex-shrink:0;width:112px;font-size:11.5px;line-height:1.45;font-variant-numeric:tabular-nums;}
 .talk-when .tm{font-weight:700;color:var(--tx);display:block;}
@@ -132,11 +154,11 @@ h1.page-t{font-size:25px;line-height:1.3;font-weight:700;margin:12px 0 6px;lette
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
 .th-ck{width:44px;}
 .vocab td.ck-cell{width:44px;text-align:center;padding:6px;}
-.vck{position:relative;width:26px;height:26px;border-radius:50%;border:1.6px solid var(--tx3);background:var(--bg);color:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .12s,border-color .12s,color .12s;-webkit-tap-highlight-color:transparent;}
+.vck{position:relative;width:26px;height:26px;border-radius:50%;border:1.6px solid var(--bd2);background:var(--bg);color:var(--tx3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:background .12s,border-color .12s,color .12s;-webkit-tap-highlight-color:transparent;}
 .vck::after{content:"";position:absolute;inset:-9px;}/* タップ領域を44px相当へ拡張 */
-.vck .ti{font-size:15px;}
-.vck:hover{border-color:var(--coral);}
-.vck.on{background:var(--coral);border-color:var(--coral);color:#fff;}
+.vck .ti{font-size:14px;}
+.vck:hover{border-color:var(--coral);color:var(--coral-m);}
+.vck.on{background:var(--coral);border-color:var(--coral);color:#fff;}/* 保存済み（#6 bookmark） */
 .vocab tbody tr.ck-on{background:var(--coral-l);}
 .vocab tbody tr.ck-on:nth-child(odd){background:var(--coral-l);}
 .vcount{display:inline-flex;align-items:center;gap:5px;}

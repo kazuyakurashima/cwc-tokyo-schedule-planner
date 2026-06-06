@@ -96,7 +96,7 @@
 
     if (!items.length) {
       root.innerHTML = '<div class="mw-empty"><i class="ti ti-bookmark-off" aria-hidden="true"></i>' +
-        'まだ単語がありません。教材で覚えたい単語に <i class="ti ti-circle" aria-hidden="true"></i> を付けると、ここにまとまります。' +
+        'まだ単語がありません。教材で覚えたい単語に <i class="ti ti-bookmark" aria-hidden="true"></i> を付けると、ここにまとまります。' +
         '<a class="mw-empty-cta" href="/prep/">教材トップへ</a></div>';
       return;
     }
@@ -135,5 +135,15 @@
     if (csvBtn) csvBtn.addEventListener('click', exportCsv);
     var prBtn = document.getElementById('mw-print');
     if (prBtn) prBtn.addEventListener('click', function () { window.print(); });
+
+    // 日本語訳トグル（既定=表示。読み手が任意で隠して腕試し・#1）
+    var jaT = document.querySelector('.ja-toggle');
+    if (jaT) jaT.addEventListener('click', function () {
+      var pass = document.getElementById('ja-pass'); if (!pass) return;
+      var hidden = pass.classList.toggle('ja-hidden');
+      jaT.setAttribute('aria-expanded', hidden ? 'false' : 'true');
+      var t = jaT.querySelector('.ja-toggle-t'); if (t) t.textContent = hidden ? '訳を表示' : '訳を隠して読む';
+      var ic = jaT.querySelector('.ti'); if (ic) { ic.classList.toggle('ti-eye-off', !hidden); ic.classList.toggle('ti-eye', hidden); }
+    });
   });
 })();

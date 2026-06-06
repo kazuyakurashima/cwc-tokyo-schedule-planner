@@ -12,9 +12,10 @@ const ICONS = "https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/ta
 
 // ---- 関連性ラベル (REL_LABELS / §8.7。講演の優劣ではなくトピックとの関連性) ----
 const REL = {
-  '◎': { label: 'このトピックに一番沿っている講演', grp: 'g-near' },
-  '○': { label: 'このトピックに内容が近い講演', grp: 'g-close' },
-  '△': { label: 'このトピックに関連のある講演', grp: 'g-rel' },
+  // 単色スケール（#8）: 関連性の強弱を coral 単色＋塗りの濃淡で示す（種類ではなく程度）
+  '◎': { label: 'このトピックに一番沿っている講演', grp: 'g-near', icon: 'ti-circle-filled' },
+  '○': { label: 'このトピックに内容が近い講演', grp: 'g-close', icon: 'ti-circle-dot' },
+  '△': { label: 'このトピックに関連のある講演', grp: 'g-rel', icon: 'ti-circle' },
 };
 const REL_ORDER = ['◎', '○', '△'];
 
@@ -242,7 +243,7 @@ function talksSection(meta) {
       return `<div class="talk${rec ? ' talk-rec' : ''}"><div class="talk-when">${when}</div><div class="talk-ttl">${esc(t.title)}</div></div>`;
     }).join('\n');
     return `<div class="talks-grp">
-      <div class="talks-grp-h ${r.grp}"><span class="dot"></span>${esc(r.label)}</div>
+      <div class="talks-grp-h ${r.grp}"><i class="ti ${r.icon}" aria-hidden="true"></i>${esc(r.label)}</div>
       ${rows}
     </div>`;
   }).join('\n');
@@ -254,25 +255,37 @@ function talksSection(meta) {
   </section>`;
 }
 
+// 空欄（空文字 or ダッシュのみ）判定：欠損に見せず空白にする（#3）
+const emptyCell = s => !s || /^[—–\-ー]+$/.test(String(s).trim());
 function vocabTable(vocab) {
+  // 列順: 用語 → 講演文脈での意味（主役）→ 一般的な意味（従）→ 語源（従）
   const body = vocab.map(v => `<tr data-wid="${esc(v.id)}">
-    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-check" aria-hidden="true"></i></button></td>
+    <td class="ck-cell"><button class="vck" type="button" aria-pressed="false" aria-label="覚えたい単語に登録／解除"><i class="ti ti-bookmark" aria-hidden="true"></i></button></td>
     <td class="term-cell" data-label="用語"><span class="term">${esc(v.term)}</span></td>
-    <td data-label="一般的な意味">${esc(v.general)}</td>
-    <td data-label="講演文脈での意味">${esc(v.talk)}</td>
-    <td data-label="語源・由来">${esc(v.root)}</td>
+    <td class="v-talk" data-label="講演での意味">${esc(v.talk)}</td>
+    <td class="v-gen${emptyCell(v.general) ? ' is-empty' : ''}" data-label="一般的な意味">${emptyCell(v.general) ? '' : esc(v.general)}</td>
+    <td class="v-root${emptyCell(v.root) ? ' is-empty' : ''}" data-label="語源・由来">${emptyCell(v.root) ? '' : esc(v.root)}</td>
   </tr>`).join('\n');
   return `<table class="vocab">
-    <thead><tr><th class="th-ck"><span class="sr-only">覚えたい</span></th><th>用語</th><th>一般的な意味</th><th>今回の講演文脈での意味</th><th>語源・由来</th></tr></thead>
+    <thead><tr><th class="th-ck"><span class="sr-only">覚えたい</span></th><th>用語</th><th>今回の講演文脈での意味</th><th class="th-sub">一般的な意味</th><th class="th-sub">語源・由来</th></tr></thead>
     <tbody>${body}</tbody>
   </table>`;
 }
 
+// URLからドメインのみ抽出（出典の出所表示・生URLは出さない・#5）
+const domainOf = url => { try { return url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0]; } catch (e) { return ''; } };
 function sourcesList(sources) {
-  return `<ul class="sources">${sources.map(s => `<li>
-    <span class="src-n">${esc(s.name)}</span>${s.kind ? `<span class="src-k">${esc(s.kind)}</span>` : ''}
-    ${s.url ? `<br><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.url)}</a>` : ''}
-  </li>`).join('\n')}</ul>`;
+  const items = sources.map(s => {
+    const dom = s.url ? domainOf(s.url) : '';
+    const inner = `<span class="src-n">${esc(s.name)}</span>${s.kind ? `<span class="src-k">${esc(s.kind)}</span>` : ''}${dom ? `<span class="src-d">${esc(dom)}<i class="ti ti-external-link" aria-hidden="true"></i></span>` : ''}`;
+    return s.url
+      ? `<li><a class="src-row" href="${esc(s.url)}" target="_blank" rel="noopener">${inner}</a></li>`
+      : `<li><span class="src-row">${inner}</span></li>`;
+  }).join('\n');
+  return `<details class="sources-wrap">
+    <summary class="sources-sum"><i class="ti ti-link" aria-hidden="true"></i>出典・参考リンク<span class="sources-c">${sources.length}</span></summary>
+    <ul class="sources">${items}</ul>
+  </details>`;
 }
 
 function footer() {
@@ -317,16 +330,19 @@ function renderTopic(t) {
 
   <section class="sec">
     <h2 class="sec-h"><i class="ti ti-vocabulary" aria-hidden="true"></i>重要語彙<span class="mini vcount" data-topic="${t.n}"><i class="ti ti-bookmark" aria-hidden="true"></i>覚えたい <span class="vcount-n">0</span> / ${t.vocab.length}</span></h2>
-    <p class="vocab-hint"><i class="ti ti-circle" aria-hidden="true"></i> を押して覚えたい単語を選ぶと、<a href="/prep/my-words.html">マイ単語</a> にまとまります（この端末のみ保存）。</p>
+    <p class="vocab-hint"><i class="ti ti-bookmark" aria-hidden="true"></i> を付けた単語は <a href="/prep/my-words.html">マイ単語</a> にまとまります（この端末のみ保存）。</p>
     ${vocabTable(t.vocab)}
   </section>
 
   <section class="sec">
     <h2 class="sec-h"><i class="ti ti-book-2" aria-hidden="true"></i>英文リーディング</h2>
     <p class="passage-lab">English Reading Passage</p>
-    <div class="passage en">${bold(t.en)}</div>
-    ${t.ja ? `<p class="passage-lab" style="margin-top:14px">日本語訳</p><div class="passage ja">${bold(t.ja)}</div>` : ''}
-    <p class="passage-lab" style="margin-top:16px">使用ソースとリンク</p>
+    <div class="passage en" lang="en">${bold(t.en)}</div>
+    ${t.ja ? `<div class="ja-head">
+      <p class="passage-lab">日本語訳</p>
+      <button class="ja-toggle" type="button" aria-expanded="true" aria-controls="ja-pass"><i class="ti ti-eye-off" aria-hidden="true"></i><span class="ja-toggle-t">訳を隠して読む</span></button>
+    </div>
+    <div class="passage ja" id="ja-pass">${bold(t.ja)}</div>` : ''}
     ${sourcesList(t.sources)}
   </section>
 
@@ -392,7 +408,7 @@ function renderMyWords() {
   const body = `<main class="wrap">
     <div class="eyebrow">予習教材 · マイ単語</div>
     <h1 class="page-t">マイ単語リスト</h1>
-    <p class="hub-lead">各教材で覚えたい単語に <i class="ti ti-circle-check" aria-hidden="true"></i> を付けると、ここに集まります（<span id="mw-count">0</span> 語）。この端末のブラウザにのみ保存されます。</p>
+    <p class="hub-lead">各教材で覚えたい単語に <i class="ti ti-bookmark" aria-hidden="true"></i> を付けると、ここに集まります（<span id="mw-count">0</span> 語）。この端末のブラウザにのみ保存されます。</p>
     <div class="mw-actions" id="mw-actions">
       <button class="mw-btn" id="mw-csv" type="button"><i class="ti ti-download" aria-hidden="true"></i>CSVで書き出し</button>
       <button class="mw-btn" id="mw-print" type="button"><i class="ti ti-printer" aria-hidden="true"></i>印刷 / PDFで保存</button>
