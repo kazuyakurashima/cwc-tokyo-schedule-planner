@@ -21,25 +21,39 @@ const REL_ORDER = ['◎', '○', '△'];
 
 // ---- トピック設定 (§8.1 PREP_TOPICS) ----
 // tier: must=最重要 / high=重要 / opt=可能であれば追いたい (§5・確定)
-// talks: 関連性rel + 当日6/10の日時(10June.md正典)。時刻のない参考録画は date:null。
-const T = (rel, title, time, stage) => ({ rel, title, date: time ? '6/10' : null, time, stage });
+// talks: 関連性rel + 当日の日時。時刻のない参考録画は date:null。
+const T = (rel, title, time, stage, date = '6/10') => ({ rel, title, date: time ? date : null, time, stage });
+const T11 = (rel, title, time, stage) => T(rel, title, time, stage, '6/11');
 const REC = (rel, title, note) => ({ rel, title, date: null, time: null, stage: note || '参考録画' });
 
 const PLANNER_IDS = {
-  "What's new in Claude Code": 'm1',
-  'Memory and dreaming for self-learning agents': 'b1',
-  'Picking the right model': 'w1',
-  'The expanding toolkit': 'b2',
-  'Beyond the basics with Claude Code': 'w2',
-  'How to get to production faster with Claude Managed Agents': 'm3',
-  'Stop babysitting your agents': 'w3',
-  'The thinking lever': 'b4',
-  'Build a production-ready agent with Claude Managed Agents': 'w5',
-  'Running an AI-native engineering org': 'b5',
-  'The capability curve': 'm6',
-  'Build a proactive agent workflow with Claude Code': 'w7',
-  'Getting more out of the Claude Platform': 'm8',
-  'The prompting playbook': 'w8',
+  "What's new in Claude Code": { day: 'day1', id: 'm1' },
+  'Memory and dreaming for self-learning agents': { day: 'day1', id: 'b1' },
+  'Picking the right model': { day: 'day1', id: 'w1' },
+  'The expanding toolkit': { day: 'day1', id: 'b2' },
+  'Beyond the basics with Claude Code': { day: 'day1', id: 'w2' },
+  'How to get to production faster with Claude Managed Agents': { day: 'day1', id: 'm3' },
+  'Stop babysitting your agents': { day: 'day1', id: 'w3' },
+  'The thinking lever': { day: 'day1', id: 'b4' },
+  'Build a production-ready agent with Claude Managed Agents': { day: 'day1', id: 'w5' },
+  'Running an AI-native engineering org': { day: 'day1', id: 'b5' },
+  'The capability curve': { day: 'day1', id: 'm6' },
+  'Build a proactive agent workflow with Claude Code': { day: 'day1', id: 'w7' },
+  'Getting more out of the Claude Platform': { day: 'day1', id: 'm8' },
+  'The prompting playbook': { day: 'day1', id: 'w8' },
+  'Claude Code native company building: How GenerativeX rewired every function around AI': { day: 'day2', id: 'f1' },
+  'What happens when domain experts can finally build': { day: 'day2', id: 'b1' },
+  'How we Claude Code': { day: 'day2', id: 'w1' },
+  'From Claude prototype to production: How Myrealtrip builds and ships AI workflows': { day: 'day2', id: 'f2' },
+  'Ship your first Managed Agent': { day: 'day2', id: 'w2' },
+  'The 1% problem: How domain expertise + Claude let a 2-person team hit #1 on a global classification benchmark': { day: 'day2', id: 'f3' },
+  'あなたの日常にClaudeを取り入れる方法 (How to integrate Claude into your daily life)': { day: 'day2', id: 'b3' },
+  'Agents that remember': { day: 'day2', id: 'w3' },
+  'Evals for taste: Hill-climbing a slide-generation agent': { day: 'day2', id: 'w4' },
+  "The model is ready. The harness is ready. The spec isn't.": { day: 'day2', id: 'f4' },
+  "Code less, query more: A co-founder's 30-day dive into Claude Code sub-agents": { day: 'day2', id: 'f5' },
+  'How I built a legal platform for 280 million people at the Claude Code Hackathon': { day: 'day2', id: 'b5' },
+  'Tool, skill, or subagent? Decomposing an agent that outgrew its prompt': { day: 'day2', id: 'w5' },
 };
 
 const PREP_TOPICS = {
@@ -50,9 +64,14 @@ const PREP_TOPICS = {
       T('◎', 'Build a proactive agent workflow with Claude Code', '16:30 – 17:15', 'Workshop'),
       T('◎', "What's new in Claude Code", '10:30 – 11:00', 'Main stage'),
       T('◎', 'Beyond the basics with Claude Code', '11:30 – 12:15', 'Workshop'),
+      T11('◎', 'How we Claude Code', '10:00 – 10:45', 'Workshop'),
       T('○', 'The expanding toolkit', '11:15 – 11:45', 'Breakout stage'),
       T('○', 'How to get to production faster with Claude Managed Agents', '12:00 – 12:30', 'Main stage'),
       T('○', 'Build a production-ready agent with Claude Managed Agents', '14:30 – 15:15', 'Workshop'),
+      T11('○', 'Claude Code native company building: How GenerativeX rewired every function around AI', '10:00 – 10:30', 'Founder stage'),
+      T11('○', 'What happens when domain experts can finally build', '10:00 – 10:30', 'Builder stage'),
+      T11('○', "Code less, query more: A co-founder's 30-day dive into Claude Code sub-agents", '14:00 – 14:30', 'Founder stage'),
+      T11('○', 'How I built a legal platform for 280 million people at the Claude Code Hackathon', '14:00 – 14:30', 'Builder stage'),
       T('△', 'The prompting playbook', '17:30 – 18:15', 'Workshop'),
     ] },
   2: { tier: 'high', title: 'モデル選定と能力',
@@ -63,6 +82,8 @@ const PREP_TOPICS = {
       T('◎', 'The capability curve', '15:20 – 15:50', 'Main stage'),
       T('◎', 'The thinking lever', '13:50 – 14:20', 'Breakout stage'),
       T('○', 'Getting more out of the Claude Platform', '16:50 – 17:20', 'Main stage'),
+      T11('○', 'The 1% problem: How domain expertise + Claude let a 2-person team hit #1 on a global classification benchmark', '11:30 – 12:00', 'Founder stage'),
+      T11('○', 'Evals for taste: Hill-climbing a slide-generation agent', '13:00 – 13:45', 'Workshop'),
     ] },
   3: { tier: 'must', title: 'Claude Managed Agents',
     summary: 'エージェントを長時間・非同期に動かす土台。primitive・sandbox・observability。',
@@ -70,7 +91,10 @@ const PREP_TOPICS = {
     talks: [
       T('◎', 'How to get to production faster with Claude Managed Agents', '12:00 – 12:30', 'Main stage'),
       T('◎', 'Build a production-ready agent with Claude Managed Agents', '14:30 – 15:15', 'Workshop'),
+      T11('◎', 'Ship your first Managed Agent', '11:00 – 11:45', 'Workshop'),
       T('○', 'Memory and dreaming for self-learning agents', '10:30 – 11:00', 'Breakout stage'),
+      T11('○', 'Agents that remember', '12:00 – 12:45', 'Workshop'),
+      T11('○', 'Tool, skill, or subagent? Decomposing an agent that outgrew its prompt', '14:00 – 14:45', 'Workshop'),
       T('△', 'Stop babysitting your agents', '12:30 – 13:15', 'Workshop'),
       T('△', 'The expanding toolkit', '11:15 – 11:45', 'Breakout stage'),
     ] },
@@ -79,6 +103,7 @@ const PREP_TOPICS = {
     source: '01_予習用教材/04_Topic4 memory dreaming context engineering.md',
     talks: [
       T('◎', 'Memory and dreaming for self-learning agents', '10:30 – 11:00', 'Breakout stage'),
+      T11('◎', 'Agents that remember', '12:00 – 12:45', 'Workshop'),
       T('○', 'Stop babysitting your agents', '12:30 – 13:15', 'Workshop'),
       T('△', 'How to get to production faster with Claude Managed Agents', '12:00 – 12:30', 'Main stage'),
       T('△', 'Build a production-ready agent with Claude Managed Agents', '14:30 – 15:15', 'Workshop'),
@@ -89,8 +114,13 @@ const PREP_TOPICS = {
     talks: [
       T('◎', 'The expanding toolkit', '11:15 – 11:45', 'Breakout stage'),
       T('◎', 'Beyond the basics with Claude Code', '11:30 – 12:15', 'Workshop'),
+      T11('◎', 'Claude Code native company building: How GenerativeX rewired every function around AI', '10:00 – 10:30', 'Founder stage'),
+      T11('◎', 'How we Claude Code', '10:00 – 10:45', 'Workshop'),
+      T11('◎', "Code less, query more: A co-founder's 30-day dive into Claude Code sub-agents", '14:00 – 14:30', 'Founder stage'),
+      T11('◎', 'Tool, skill, or subagent? Decomposing an agent that outgrew its prompt', '14:00 – 14:45', 'Workshop'),
       T('○', 'Build a production-ready agent with Claude Managed Agents', '14:30 – 15:15', 'Workshop'),
       T('○', 'Stop babysitting your agents', '12:30 – 13:15', 'Workshop'),
+      T11('○', 'Ship your first Managed Agent', '11:00 – 11:45', 'Workshop'),
       T('△', 'Memory and dreaming for self-learning agents', '10:30 – 11:00', 'Breakout stage'),
     ] },
   6: { tier: 'high', title: 'Eval / ベンチマーク',
@@ -99,8 +129,13 @@ const PREP_TOPICS = {
     talks: [
       REC('◎', 'Evaluating and improving Replit Agent at scale', '参考録画 (SF)'),
       T('◎', 'The prompting playbook', '17:30 – 18:15', 'Workshop'),
+      T11('◎', 'The 1% problem: How domain expertise + Claude let a 2-person team hit #1 on a global classification benchmark', '11:30 – 12:00', 'Founder stage'),
+      T11('◎', 'Evals for taste: Hill-climbing a slide-generation agent', '13:00 – 13:45', 'Workshop'),
       T('○', 'The capability curve', '15:20 – 15:50', 'Main stage'),
       T('○', 'Stop babysitting your agents', '12:30 – 13:15', 'Workshop'),
+      T11('○', 'From Claude prototype to production: How Myrealtrip builds and ships AI workflows', '10:45 – 11:15', 'Founder stage'),
+      T11('○', "The model is ready. The harness is ready. The spec isn't.", '13:15 – 13:45', 'Founder stage'),
+      T11('○', 'Tool, skill, or subagent? Decomposing an agent that outgrew its prompt', '14:00 – 14:45', 'Workshop'),
       REC('○', 'Caching, harnesses, and advisors: Building on Claude at GitHub scale', '参考録画'),
     ] },
   7: { tier: 'opt', title: 'Extended Thinking',
@@ -117,6 +152,10 @@ const PREP_TOPICS = {
     talks: [
       T('◎', 'The prompting playbook', '17:30 – 18:15', 'Workshop'),
       T('◎', 'Running an AI-native engineering org', '14:35 – 15:05', 'Breakout stage'),
+      T11('◎', 'Claude Code native company building: How GenerativeX rewired every function around AI', '10:00 – 10:30', 'Founder stage'),
+      T11('◎', 'From Claude prototype to production: How Myrealtrip builds and ships AI workflows', '10:45 – 11:15', 'Founder stage'),
+      T11('◎', "The model is ready. The harness is ready. The spec isn't.", '13:15 – 13:45', 'Founder stage'),
+      T11('○', 'あなたの日常にClaudeを取り入れる方法 (How to integrate Claude into your daily life)', '11:30 – 12:00', 'Builder stage'),
       REC('○', 'Building AI-native at enterprise scale (monday.com / Doctolib / Delivery Hero)', '参考録画 (London)'),
       REC('○', 'From one person to 80: Scaling a hypergrowth engineering org with Claude Code', '参考録画 (London)'),
     ] },
@@ -265,9 +304,9 @@ function talksSection(meta) {
             <span class="talk-time"><span class="talk-date">${esc(t.date)}</span><span class="talk-clock">${esc(t.time)}</span></span>
             <span class="talk-stg ${stgCls}">${esc(t.stage)}</span>
           </div>`;
-      const plannerId = !rec ? PLANNER_IDS[t.title] : '';
-      const planBtn = plannerId
-        ? `<button class="talk-plan" type="button" data-plan-id="${esc(plannerId)}" aria-pressed="false"><i class="ti ti-circle-plus" aria-hidden="true"></i><span>参加する</span></button>`
+      const planner = !rec ? PLANNER_IDS[t.title] : null;
+      const planBtn = planner
+        ? `<button class="talk-plan" type="button" data-plan-day="${esc(planner.day)}" data-plan-id="${esc(planner.id)}" aria-pressed="false"><i class="ti ti-circle-plus" aria-hidden="true"></i><span>参加する</span></button>`
         : '';
       return `<div class="talk${rec ? ' talk-rec' : ''}">
         ${meta}
@@ -277,10 +316,13 @@ function talksSection(meta) {
         </div>
       </div>`;
     }).join('\n');
-    return `<div class="talks-grp">
-      <div class="talks-grp-h ${r.grp}"><i class="ti ${r.icon}" aria-hidden="true"></i>${esc(r.label)}</div>
-      ${rows}
-    </div>`;
+    const open = rel === '◎' ? ' open' : '';
+    return `<details class="talks-grp"${open}>
+      <summary class="talks-grp-h ${r.grp}"><span class="talks-grp-l"><i class="ti ${r.icon}" aria-hidden="true"></i>${esc(r.label)}</span><span class="talks-count">${items.length}件</span><i class="ti ti-chevron-down talks-chev" aria-hidden="true"></i></summary>
+      <div class="talks-list">
+        ${rows}
+      </div>
+    </details>`;
   }).join('\n');
   return `<section class="sec">
     <h2 class="sec-h"><i class="ti ti-microphone" aria-hidden="true"></i>この講演を聞くなら覚える単語</h2>

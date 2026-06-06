@@ -4,34 +4,56 @@
 (function () {
   'use strict';
   var KEY = 'cwc_tokyo_2026_prep_words';
-  var PLAN_KEY_DAY1 = 'cwc_tokyo_2026_day1';
-  var DAY1_SESSIONS = [
-    { id: 'm1', s: '10:30', e: '11:00' },
-    { id: 'b1', s: '10:30', e: '11:00' },
-    { id: 'w1', s: '10:30', e: '11:15' },
-    { id: 'm2', s: '11:15', e: '11:45' },
-    { id: 'b2', s: '11:15', e: '11:45' },
-    { id: 'w2', s: '11:30', e: '12:15' },
-    { id: 'm3', s: '12:00', e: '12:30' },
-    { id: 'b3', s: '12:00', e: '12:30' },
-    { id: 'w3', s: '12:30', e: '13:15' },
-    { id: 'w4', s: '13:30', e: '14:15' },
-    { id: 'm4', s: '13:50', e: '14:20' },
-    { id: 'b4', s: '13:50', e: '14:20' },
-    { id: 'w5', s: '14:30', e: '15:15' },
-    { id: 'm5', s: '14:35', e: '15:05' },
-    { id: 'b5', s: '14:35', e: '15:05' },
-    { id: 'm6', s: '15:20', e: '15:50' },
-    { id: 'b6', s: '15:20', e: '15:50' },
-    { id: 'w6', s: '15:30', e: '16:15' },
-    { id: 'm7', s: '16:05', e: '16:35' },
-    { id: 'b7', s: '16:05', e: '16:35' },
-    { id: 'w7', s: '16:30', e: '17:15' },
-    { id: 'm8', s: '16:50', e: '17:20' },
-    { id: 'b8', s: '16:50', e: '17:20' },
-    { id: 'w8', s: '17:30', e: '18:15' },
-    { id: 'm9', s: '17:35', e: '18:05' }
-  ];
+  var PLAN_KEYS = { day1: 'cwc_tokyo_2026_day1', day2: 'cwc_tokyo_2026_day2' };
+  var SESSIONS = {
+    day1: [
+      { id: 'm1', s: '10:30', e: '11:00' },
+      { id: 'b1', s: '10:30', e: '11:00' },
+      { id: 'w1', s: '10:30', e: '11:15' },
+      { id: 'm2', s: '11:15', e: '11:45' },
+      { id: 'b2', s: '11:15', e: '11:45' },
+      { id: 'w2', s: '11:30', e: '12:15' },
+      { id: 'm3', s: '12:00', e: '12:30' },
+      { id: 'b3', s: '12:00', e: '12:30' },
+      { id: 'w3', s: '12:30', e: '13:15' },
+      { id: 'w4', s: '13:30', e: '14:15' },
+      { id: 'm4', s: '13:50', e: '14:20' },
+      { id: 'b4', s: '13:50', e: '14:20' },
+      { id: 'w5', s: '14:30', e: '15:15' },
+      { id: 'm5', s: '14:35', e: '15:05' },
+      { id: 'b5', s: '14:35', e: '15:05' },
+      { id: 'm6', s: '15:20', e: '15:50' },
+      { id: 'b6', s: '15:20', e: '15:50' },
+      { id: 'w6', s: '15:30', e: '16:15' },
+      { id: 'm7', s: '16:05', e: '16:35' },
+      { id: 'b7', s: '16:05', e: '16:35' },
+      { id: 'w7', s: '16:30', e: '17:15' },
+      { id: 'm8', s: '16:50', e: '17:20' },
+      { id: 'b8', s: '16:50', e: '17:20' },
+      { id: 'w8', s: '17:30', e: '18:15' },
+      { id: 'm9', s: '17:35', e: '18:05' }
+    ],
+    day2: [
+      { id: 'f1', s: '10:00', e: '10:30' },
+      { id: 'b1', s: '10:00', e: '10:30' },
+      { id: 'w1', s: '10:00', e: '10:45' },
+      { id: 'f2', s: '10:45', e: '11:15' },
+      { id: 'b2', s: '10:45', e: '11:15' },
+      { id: 'w2', s: '11:00', e: '11:45' },
+      { id: 'f3', s: '11:30', e: '12:00' },
+      { id: 'b3', s: '11:30', e: '12:00' },
+      { id: 'w3', s: '12:00', e: '12:45' },
+      { id: 'w4', s: '13:00', e: '13:45' },
+      { id: 'f4', s: '13:15', e: '13:45' },
+      { id: 'b4', s: '13:15', e: '13:45' },
+      { id: 'f5', s: '14:00', e: '14:30' },
+      { id: 'b5', s: '14:00', e: '14:30' },
+      { id: 'w5', s: '14:00', e: '14:45' },
+      { id: 'b6', s: '14:45', e: '15:15' },
+      { id: 'w6', s: '15:00', e: '15:45' },
+      { id: 'b7', s: '15:30', e: '16:00' }
+    ]
+  };
 
   function load() {
     try {
@@ -43,14 +65,16 @@
     try { localStorage.setItem(KEY, JSON.stringify(Array.from(set))); }
     catch (e) { /* プライベートブラウズ等の書込失敗は握りつぶす（NFR-P8） */ }
   }
-  function loadPlan() {
+  function loadPlan(day) {
+    var key = PLAN_KEYS[day || 'day1'];
     try {
-      var a = JSON.parse(localStorage.getItem(PLAN_KEY_DAY1) || '[]');
+      var a = JSON.parse(localStorage.getItem(key) || '[]');
       return new Set(Array.isArray(a) ? a : []);
     } catch (e) { return new Set(); }
   }
-  function savePlan(set) {
-    try { localStorage.setItem(PLAN_KEY_DAY1, JSON.stringify(Array.from(set))); }
+  function savePlan(day, set) {
+    var key = PLAN_KEYS[day || 'day1'];
+    try { localStorage.setItem(key, JSON.stringify(Array.from(set))); }
     catch (e) { /* localStorage unavailable: leave the UI optimistic only until reload */ }
   }
   function esc(s) {
@@ -63,8 +87,8 @@
   function overlaps(a, b) {
     return min(a.s) < min(b.e) && min(a.e) > min(b.s);
   }
-  function findSession(id) {
-    return DAY1_SESSIONS.find(function (s) { return s.id === id; });
+  function findSession(day, id) {
+    return (SESSIONS[day] || []).find(function (s) { return s.id === id; });
   }
 
   var checked = load();
@@ -97,8 +121,9 @@
   }
 
   function refreshPlanButtons() {
-    var plan = loadPlan();
     document.querySelectorAll('.talk-plan[data-plan-id]').forEach(function (btn) {
+      var day = btn.getAttribute('data-plan-day') || 'day1';
+      var plan = loadPlan(day);
       setPlanBtn(btn, plan.has(btn.getAttribute('data-plan-id')));
     });
   }
@@ -123,25 +148,26 @@
     document.querySelectorAll('.talk-plan[data-plan-id]').forEach(function (btn) {
       btn.addEventListener('click', function () {
         var id = btn.getAttribute('data-plan-id');
-        var plan = loadPlan();
+        var day = btn.getAttribute('data-plan-day') || 'day1';
+        var plan = loadPlan(day);
         if (plan.has(id)) {
           plan.delete(id);
         } else {
-          var target = findSession(id);
+          var target = findSession(day, id);
           if (target) {
-            DAY1_SESSIONS.forEach(function (s) {
+            (SESSIONS[day] || []).forEach(function (s) {
               if (s.id !== id && overlaps(target, s)) plan.delete(s.id);
             });
           }
           plan.add(id);
         }
-        savePlan(plan);
+        savePlan(day, plan);
         refreshPlanButtons();
       });
     });
     refreshPlanButtons();
     window.addEventListener('storage', function (e) {
-      if (e.key === PLAN_KEY_DAY1) refreshPlanButtons();
+      if (e.key === PLAN_KEYS.day1 || e.key === PLAN_KEYS.day2) refreshPlanButtons();
     });
   }
 

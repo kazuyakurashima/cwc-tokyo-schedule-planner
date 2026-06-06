@@ -116,37 +116,44 @@ a.src-row:hover .src-n{color:var(--coral-d);}
 /* ---- talks (この講演を聞くなら覚える単語) ---- */
 .talks-intro{font-size:13px;color:var(--tx2);margin:0 0 14px;}
 .talks-back{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--coral-m);text-decoration:none;}
-.talks-grp{margin-top:16px;}
-.talks-grp-h{font-size:12.5px;font-weight:700;color:var(--tx2);display:flex;align-items:center;gap:7px;margin:0 0 9px;}
-.talks-grp-h .ti{font-size:15px;color:var(--coral-m);flex-shrink:0;}/* 単色＋塗りの濃淡でスケール表現（#8） */
-/* カード全体: 縦積み（メタ情報 → タイトル）*/
-.talk{display:flex;flex-direction:column;gap:7px;padding:13px 15px;border:0.5px solid var(--bd);border-radius:12px;background:var(--sf);margin-bottom:8px;}
-/* 上段: 日時 + ステージ */
-.talk-meta{display:flex;align-items:center;flex-wrap:wrap;gap:8px;}
+.talks-grp{margin-top:10px;border-top:0.5px solid var(--bd);}
+.talks-grp:last-of-type{border-bottom:0.5px solid var(--bd);}
+.talks-grp-h{list-style:none;font-size:12.5px;font-weight:700;color:var(--tx2);display:flex;align-items:center;gap:8px;padding:11px 0;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.talks-grp-h::-webkit-details-marker{display:none;}
+.talks-grp-l{display:flex;align-items:center;gap:7px;min-width:0;flex:1;}
+.talks-grp-l .ti{font-size:15px;color:var(--coral-m);flex-shrink:0;}/* 単色＋塗りの濃淡でスケール表現（#8） */
+.talks-count{font-size:10.5px;font-weight:700;color:var(--tx3);background:var(--sf2);border:0.5px solid var(--bd);border-radius:999px;padding:1px 7px;line-height:1.5;white-space:nowrap;}
+.talks-chev{font-size:15px;color:var(--tx3);transition:transform .15s;flex-shrink:0;}
+.talks-grp[open] .talks-chev{transform:rotate(180deg);}
+.talks-list{padding:0 0 8px;}
+.talk{display:grid;grid-template-columns:minmax(112px,auto) minmax(0,1fr) auto;align-items:center;gap:10px;padding:7px 0;border-top:0.5px solid var(--bd);background:transparent;}
+.talk-meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px;min-width:0;}
 /* 日付＋時刻：メイン数値情報として前面へ */
 .talk-time{display:inline-flex;align-items:baseline;gap:5px;font-variant-numeric:tabular-nums;}
 .talk-date{font-size:11px;font-weight:700;color:var(--tx3);letter-spacing:.02em;}
-.talk-clock{font-size:13px;font-weight:700;color:var(--tx);}
+.talk-clock{font-size:12px;font-weight:700;color:var(--tx2);}
 /* ステージピル */
-.talk-stg{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.01em;white-space:nowrap;}
+.talk-stg{display:inline-flex;align-items:center;font-size:9.5px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:.01em;white-space:nowrap;}
 .stg-main  {background:var(--teal-l);color:var(--teal-d);}
 .stg-brk   {background:var(--purple-l);color:var(--purple-d);}
 .stg-ws    {background:var(--coral-l);color:var(--coral-d);}
 .stg-rec   {background:var(--sf3);color:var(--tx2);}
 /* タイトル: 主役 */
-.talk-ttl{font-size:13.5px;font-weight:600;color:var(--tx);line-height:1.5;}
-.talk-body{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
-.talk-plan{min-height:30px;display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:0 0 auto;border:1px solid var(--coral);border-radius:7px;background:var(--bg);color:var(--coral-d);font-size:11.5px;font-weight:700;line-height:1;padding:0 10px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s,border-color .12s,color .12s;}
-.talk-plan .ti{font-size:14px;}
+.talk-ttl{font-size:12.5px;font-weight:600;color:var(--tx);line-height:1.45;min-width:0;}
+.talk-body{display:contents;}
+.talk-plan{min-height:26px;display:inline-flex;align-items:center;justify-content:center;gap:4px;border:0.5px solid var(--bd2);border-radius:7px;background:var(--bg);color:var(--tx3);font-size:10.5px;font-weight:700;line-height:1;padding:0 8px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s,border-color .12s,color .12s;white-space:nowrap;}
+.talk-plan .ti{font-size:13px;}
 .talk-plan:hover{background:var(--coral-l);}
 .talk-plan.on{background:var(--coral);border-color:var(--coral);color:#fff;}
 /* 参考録画: メタ全体を少し淡く */
 .talk-rec .talk-ttl{color:var(--tx2);}
 @media (max-width:720px){
-  .talk{padding:11px 13px;gap:6px;}
+  .talks-grp-h{padding:12px 0;}
+  .talk{grid-template-columns:1fr auto;gap:5px 8px;padding:9px 0;}
+  .talk-meta{grid-column:1 / -1;}
   .talk-clock{font-size:12.5px;}
-  .talk-body{align-items:stretch;flex-direction:column;gap:9px;}
-  .talk-plan{width:100%;}
+  .talk-ttl{font-size:13px;}
+  .talk-plan{grid-column:2;grid-row:2;}
 }
 
 /* ---- hub (index) ---- */
